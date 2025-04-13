@@ -1,0 +1,120 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#e3f2fd',
+          100: '#bbdefb',
+          200: '#90caf9',
+          300: '#64b5f6',
+          400: '#42a5f5',
+          500: '#2196f3',
+          600: '#1e88e5',
+          700: '#1976d2',
+          800: '#1565c0',
+          900: '#0d47a1',
+        },
+        secondary: {
+          50: '#fce4ec',
+          100: '#f8bbd0',
+          200: '#f48fb1',
+          300: '#f06292',
+          400: '#ec407a',
+          500: '#e91e63',
+          600: '#d81b60',
+          700: '#c2185b',
+          800: '#ad1457',
+          900: '#880e4f',
+        },
+        neutral: {
+          50: '#fafafa',
+          100: '#f5f5f5',
+          200: '#eeeeee',
+          300: '#e0e0e0',
+          400: '#bdbdbd',
+          500: '#9e9e9e',
+          600: '#757575',
+          700: '#616161',
+          800: '#424242',
+          900: '#212121',
+        },
+        success: {
+          light: '#81c784',
+          main: '#4caf50',
+          dark: '#388e3c',
+          contrast: '#ffffff',
+        },
+        warning: {
+          light: '#ffb74d',
+          main: '#ff9800',
+          dark: '#f57c00',
+          contrast: '#ffffff',
+        },
+        error: {
+          light: '#e57373',
+          main: '#f44336',
+          dark: '#d32f2f',
+          contrast: '#ffffff',
+        },
+        info: {
+          light: '#4fc3f7',
+          main: '#29b6f6',
+          dark: '#0288d1',
+          contrast: '#ffffff',
+        },
+        accent: {
+          purple: '#9c27b0',
+          teal: '#009688',
+          amber: '#ffb300',
+          cyan: '#00bcd4',
+          lime: '#cddc39',
+        },
+        background: {
+          paper: '#ffffff',
+          default: '#f6f8fe',
+        },
+      },
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif'],
+      },
+      boxShadow: {
+        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'elevation-1': '0 2px 1px -1px rgba(0,0,0,0.1), 0 1px 1px 0 rgba(0,0,0,0.07), 0 1px 3px 0 rgba(0,0,0,0.06)',
+        'elevation-2': '0 3px 1px -2px rgba(0,0,0,0.1), 0 2px 2px 0 rgba(0,0,0,0.07), 0 1px 5px 0 rgba(0,0,0,0.06)',
+        'elevation-3': '0 3px 3px -2px rgba(0,0,0,0.1), 0 3px 4px 0 rgba(0,0,0,0.07), 0 1px 8px 0 rgba(0,0,0,0.06)',
+        'elevation-4': '0 2px 4px -1px rgba(0,0,0,0.1), 0 4px 5px 0 rgba(0,0,0,0.07), 0 1px 10px 0 rgba(0,0,0,0.06)',
+        'elevation-6': '0 3px 5px -1px rgba(0,0,0,0.1), 0 6px 10px 0 rgba(0,0,0,0.07), 0 1px 18px 0 rgba(0,0,0,0.06)',
+        'elevation-8': '0 5px 5px -3px rgba(0,0,0,0.1), 0 8px 10px 1px rgba(0,0,0,0.07), 0 3px 14px 2px rgba(0,0,0,0.06)',
+        'card': '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+        'input': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        'button': '0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12)',
+      },
+      borderRadius: {
+        'DEFAULT': '8px',
+        'md': '8px',
+        'lg': '12px',
+        'xl': '16px',
+        '2xl': '24px',
+      },
+      animation: {
+        'bounce-slow': 'bounce 3s infinite',
+        'pulse-gentle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      backdropFilter: {
+        'none': 'none',
+        'blur': 'blur(10px)',
+      },
+      transitionTimingFunction: {
+        'bounce': 'cubic-bezier(0.68, -0.55, 0.27, 1.55)',
+        'elastic': 'cubic-bezier(0.37, 0, 0.63, 1)',
+      }
+    },
+  },
+  plugins: [],
+} 

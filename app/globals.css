@@ -1,0 +1,376 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 33, 33, 33;
+  --background-start-rgb: 246, 248, 254;
+  --background-end-rgb: 255, 255, 255;
+  --primary-light: #bbdefb;
+  --primary-main: #2196f3;
+  --secondary-light: #f8bbd0;
+  --secondary-main: #e91e63;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb))
+  );
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Background animations - reduced number and simplified for better performance */
+.bg-animations {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-bubble {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.08;
+  filter: blur(8px);
+  will-change: transform;
+  animation: float-bubble ease-in-out infinite;
+}
+
+.bg-bubble:nth-child(1) {
+  width: 300px;
+  height: 300px;
+  bottom: -50px;
+  left: 10%;
+  background: linear-gradient(45deg, var(--primary-light), var(--primary-main));
+  animation-duration: 60s;
+}
+
+.bg-bubble:nth-child(2) {
+  width: 200px;
+  height: 200px;
+  top: 10%;
+  right: 15%;
+  background: linear-gradient(45deg, var(--secondary-light), var(--secondary-main));
+  animation-duration: 70s;
+}
+
+/* Simplified animation with fewer keyframes and will-change for GPU acceleration */
+@keyframes float-bubble {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-30px) translateX(30px);
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+}
+
+/* Moving dots */
+.bg-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--primary-main);
+  opacity: 0.15;
+  animation: move-dot linear infinite;
+}
+
+.bg-dot:nth-child(5) {
+  top: 15%;
+  left: 25%;
+  animation-duration: 30s;
+  animation-delay: 0s;
+}
+
+.bg-dot:nth-child(6) {
+  top: 80%;
+  left: 60%;
+  animation-duration: 25s;
+  animation-delay: 5s;
+}
+
+.bg-dot:nth-child(7) {
+  top: 30%;
+  left: 80%;
+  animation-duration: 40s;
+  animation-delay: 2s;
+}
+
+.bg-dot:nth-child(8) {
+  top: 65%;
+  left: 15%;
+  animation-duration: 35s;
+  animation-delay: 7s;
+}
+
+@keyframes move-dot {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(100vh) translateX(30vw);
+  }
+  50% {
+    transform: translateY(50vh) translateX(70vw);
+  }
+  75% {
+    transform: translateY(-50vh) translateX(40vw);
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+}
+
+/* Shimmer animation for column headers */
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@layer components {
+  .material-card {
+    @apply bg-white rounded-xl shadow-elevation-1 transition-shadow duration-300 hover:shadow-elevation-2 border border-neutral-100/80;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg hover:translate-y-[-1px] active:translate-y-[0px];
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-neutral-200 hover:bg-neutral-50 active:bg-neutral-100 text-neutral-800 font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md hover:translate-y-[-1px] active:translate-y-[0px];
+  }
+
+  .btn-fab {
+    @apply bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-elevation-6 hover:shadow-elevation-8 transition-all duration-300 hover:transform hover:scale-110 active:scale-100;
+  }
+
+  .input-material {
+    @apply block w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200 bg-neutral-50/50 hover:bg-white;
+  }
+
+  .animate-ripple {
+    @apply overflow-hidden relative;
+  }
+
+  .animate-ripple::after {
+    content: '';
+    @apply absolute block rounded-full opacity-0 transition-all duration-500;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    padding-top: 120%;
+    transform: translate(-50%, -50%) scale(0);
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .animate-ripple:active::after {
+    @apply opacity-30;
+    transform: translate(-50%, -50%) scale(1);
+    transition: 0s;
+  }
+  
+  .material-tabs .active-tab {
+    @apply text-primary-500 border-b-2 border-primary-500 font-semibold;
+  }
+  
+  .material-tabs .tab {
+    @apply px-4 py-2 font-medium transition-all duration-200 hover:bg-neutral-100 rounded-t-lg text-neutral-600 hover:text-primary-700;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .streak-badge {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+    background: linear-gradient(135deg, #FFA500, #FF6347);
+    color: white;
+    box-shadow: 0 2px 4px rgba(255, 165, 0, 0.3);
+  }
+  
+  .habit-tag {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium shadow-sm;
+  }
+  
+  .habit-tag.daily {
+    background: linear-gradient(135deg, #64B5F6, #1E88E5);
+    color: white;
+  }
+  
+  .habit-tag.weekly {
+    background: linear-gradient(135deg, #F06292, #D81B60);
+    color: white;
+  }
+
+  /* Optimized drag and drop styles with better performance */
+  .dragging-item {
+    @apply opacity-95 shadow-md z-10;
+    border: 2px solid #2196f3;
+    background-color: white;
+    transform: scale(1.02);
+    position: relative;
+    cursor: grabbing;
+  }
+
+  .drop-indicator {
+    @apply border-2 border-dashed border-primary-400 rounded-xl h-16 flex items-center justify-center bg-primary-50/50 my-4;
+  }
+
+  .draggable-board-item {
+    @apply cursor-grab shadow-sm;
+    position: relative;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .draggable-board-item:active {
+    @apply cursor-grabbing;
+  }
+
+  .drag-over-pending {
+    @apply bg-primary-50/70;
+  }
+
+  .drag-over-completed {
+    @apply bg-green-50/70;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s infinite ease-in-out;
+  will-change: transform;
+}
+
+/* Simplified highlight animation */
+.highlight-drop {
+  background-color: rgba(33, 150, 243, 0.1);
+  transition: background-color 0.5s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Drag and drop styling */
+.column-content {
+  min-height: 200px;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: rgba(245, 245, 245, 0.6);
+  border: 2px solid transparent;
+}
+
+.dragging-over {
+  background-color: rgba(230, 230, 250, 0.7);
+  border: 2px dashed #2196f3;
+}
+
+.recently-moved {
+  background-color: rgba(144, 238, 144, 0.2);
+}
+
+/* Reduce board column animations */
+.board-column {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.empty-column-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  color: #888;
+  font-style: italic;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+/* Body class when dragging */
+body.is-dragging {
+  cursor: grabbing !important;
+}
+
+body.is-dragging * {
+  cursor: grabbing !important;
+} 
