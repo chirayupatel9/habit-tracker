@@ -19,7 +19,16 @@ export default function HabitItem({
 }: HabitItemProps) {
   const { toggleCompletion, deleteHabit, toggleFavorite } = useHabits();
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const isCompletedToday = habit.completedDates.includes(formatDate(new Date()));
+  
+  // Create today's date string in consistent format
+  const today = new Date();
+  const formattedToday = 
+    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  
+  // Use the prop value if provided, otherwise calculate it
+  const isCompletedToday = propCompleted !== undefined 
+    ? propCompleted 
+    : habit.completedDates.includes(formattedToday);
 
   const handleDelete = (e: React.MouseEvent) => {
     // Prevent event from bubbling up to the draggable parent

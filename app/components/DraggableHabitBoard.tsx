@@ -44,26 +44,39 @@ const MemoizedHabitItem = memo(({ habit, isDragging, isCompleted }: {
 MemoizedHabitItem.displayName = 'MemoizedHabitItem';
 
 const DraggableHabitBoard = () => {
-  const { habits, toggleCompletion, deleteHabit } = useHabits();
+  const { habits, toggleCompletion, deleteHabit, setCompletionStatus } = useHabits();
   const [recentlyMoved, setRecentlyMoved] = useState<string | null>(null);
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
 
   // Split habits into pending and completed for performance
-  const pendingHabits = useMemo(() => 
-    habits.filter(habit => !isHabitCompletedToday(habit)),
-    [habits]
-  );
+  const pendingHabits = useMemo(() => {
+    // Format today's date consistently to match with what's in completedDates
+    const today = new Date();
+    const formattedToday = 
+      `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    return habits.filter(habit => !habit.completedDates.includes(formattedToday));
+  }, [habits]);
   
-  const completedHabits = useMemo(() => 
-    habits.filter(habit => isHabitCompletedToday(habit)),
-    [habits]
-  );
+  const completedHabits = useMemo(() => {
+    // Format today's date consistently to match with what's in completedDates
+    const today = new Date();
+    const formattedToday = 
+      `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    return habits.filter(habit => habit.completedDates.includes(formattedToday));
+  }, [habits]);
 
-  // Helper function to check if a habit is completed today
-  function isHabitCompletedToday(habit: Habit): boolean {
-    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD" format
-    return habit.completedDates.includes(today);
-  }
+  // Force re-render when a habit is moved
+  useEffect(() => {
+    if (recentlyMoved) {
+      // Use a shorter timeout for visual feedback that doesn't delay the actual UI update
+      const timer = setTimeout(() => {
+        setRecentlyMoved(null);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [recentlyMoved]);
 
   useEffect(() => {
     // Trigger animation on mount
@@ -94,18 +107,27 @@ const DraggableHabitBoard = () => {
 
     // Get the habit being dragged
     const habitId = draggableId;
-
-    // If moving between columns, toggle the completion status
+    
+    // Log the drag operation for debugging
+    console.log(`Dragging habit ID ${habitId} from ${source.droppableId} to ${destination.droppableId}`);
+    
+    // If moving between columns, explicitly set completion status using the new direct method
     if (destination.droppableId !== source.droppableId) {
-      toggleCompletion(habitId);
-      setRecentlyMoved(habitId);
+      if (destination.droppableId === 'completed') {
+        // Use the direct completion function instead of toggle
+        setCompletionStatus(habitId, true);
+        console.log(`Directly setting habit ${habitId} as COMPLETED`);
+      } 
+      else if (destination.droppableId === 'pending') {
+        // Use the direct completion function instead of toggle
+        setCompletionStatus(habitId, false);
+        console.log(`Directly setting habit ${habitId} as PENDING`);
+      }
       
-      // Clear the recently moved flag after a delay
-      setTimeout(() => {
-        setRecentlyMoved(null);
-      }, 800);
+      // Force immediate UI update by setting recentlyMoved
+      setRecentlyMoved(habitId);
     }
-  }, [toggleCompletion]);
+  }, [habits, setCompletionStatus]);
 
   // Render functions to minimize work during drag operations
   const renderPendingList = useCallback(() => (
@@ -220,4 +242,4 @@ const DraggableHabitBoard = () => {
   );
 };
 
-export default DraggableHabitBoard; 
+export default DraggableHabitBoard;

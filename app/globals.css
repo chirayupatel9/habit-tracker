@@ -324,11 +324,13 @@ body {
   border-radius: 8px;
   background-color: rgba(245, 245, 245, 0.6);
   border: 2px solid transparent;
+  min-height: 300px;
 }
 
 .dragging-over {
   background-color: rgba(230, 230, 250, 0.7);
   border: 2px dashed #2196f3;
+  transition: background-color 0.2s ease;
 }
 
 .recently-moved {

@@ -107,26 +107,41 @@ export function generateId(): string {
 
 // Toggle a habit's completion status for today
 export function toggleHabitCompletion(habit: Habit): Habit {
-  const today = format(new Date(), 'yyyy-MM-dd');
-  const isCompleted = isHabitCompletedToday(habit);
+  // Format today's date in consistent "yyyy-MM-dd" format using current date
+  const today = new Date();
+  const formattedToday = 
+    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  
+  // Check if the habit is already completed today
+  const isCompleted = habit.completedDates.includes(formattedToday);
   
   if (isCompleted) {
     // Remove today from completed dates
+    const updatedDates = habit.completedDates.filter(date => date !== formattedToday);
+    console.log(`Removing completion: ${formattedToday}`);
+    console.log(`Updated dates:`, updatedDates);
+    
     return {
       ...habit,
-      completedDates: habit.completedDates.filter(date => date !== today),
+      completedDates: updatedDates,
       streakCount: calculateStreak({ 
         ...habit, 
-        completedDates: habit.completedDates.filter(date => date !== today) 
+        completedDates: updatedDates
       }),
     };
   } else {
     // Add today to completed dates
-    const updatedCompletedDates = [...habit.completedDates, today];
+    const updatedDates = [...habit.completedDates, formattedToday];
+    console.log(`Adding completion: ${formattedToday}`);
+    console.log(`Updated dates:`, updatedDates);
+    
     return {
       ...habit,
-      completedDates: updatedCompletedDates,
-      streakCount: calculateStreak({ ...habit, completedDates: updatedCompletedDates }),
+      completedDates: updatedDates,
+      streakCount: calculateStreak({ 
+        ...habit, 
+        completedDates: updatedDates 
+      }),
     };
   }
 } 
