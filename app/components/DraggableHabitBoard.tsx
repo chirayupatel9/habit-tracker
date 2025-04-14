@@ -5,6 +5,7 @@ import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, D
 import { useHabits } from '../lib/HabitContext';
 import HabitItem from './HabitItem';
 import { Habit } from '../data/habits';
+import { Star } from '../components/icons';
 
 // StrictModeDroppable component for React 18 compatibility
 const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
@@ -47,25 +48,40 @@ const DraggableHabitBoard = () => {
   const { habits, toggleCompletion, deleteHabit, setCompletionStatus } = useHabits();
   const [recentlyMoved, setRecentlyMoved] = useState<string | null>(null);
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState<boolean>(false);
+  
+  // Format today's date consistently to match with what's in completedDates
+  const today = new Date();
+  const formattedToday = 
+    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
   // Split habits into pending and completed for performance
   const pendingHabits = useMemo(() => {
-    // Format today's date consistently to match with what's in completedDates
-    const today = new Date();
-    const formattedToday = 
-      `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    let filtered = habits.filter(habit => !habit.completedDates.includes(formattedToday));
     
-    return habits.filter(habit => !habit.completedDates.includes(formattedToday));
-  }, [habits]);
+    // Apply favorites filter if enabled
+    if (showFavoritesOnly) {
+      filtered = filtered.filter(habit => habit.favorite);
+    }
+    
+    return filtered;
+  }, [habits, showFavoritesOnly, formattedToday]);
   
   const completedHabits = useMemo(() => {
-    // Format today's date consistently to match with what's in completedDates
-    const today = new Date();
-    const formattedToday = 
-      `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    let filtered = habits.filter(habit => habit.completedDates.includes(formattedToday));
     
-    return habits.filter(habit => habit.completedDates.includes(formattedToday));
-  }, [habits]);
+    // Apply favorites filter if enabled
+    if (showFavoritesOnly) {
+      filtered = filtered.filter(habit => habit.favorite);
+    }
+    
+    return filtered;
+  }, [habits, showFavoritesOnly, formattedToday]);
+  
+  // Get counts for UI display
+  const totalFavorites = useMemo(() => 
+    habits.filter(habit => habit.favorite).length, 
+  [habits]);
 
   // Force re-render when a habit is moved
   useEffect(() => {
@@ -185,6 +201,20 @@ const DraggableHabitBoard = () => {
 
   return (
     <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+          className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            showFavoritesOnly 
+              ? 'bg-amber-100 text-amber-700' 
+              : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+          }`}
+        >
+          <Star className={`h-4 w-4 ${showFavoritesOnly ? 'text-amber-500' : ''}`} />
+          {showFavoritesOnly ? 'All Habits' : `Favorites (${totalFavorites})`}
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <div className="board-column">
           <div className="column-header">

@@ -62,10 +62,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    // Clear user from state
     setUser(null);
+    
+    // Clear all authentication and user data from localStorage
     localStorage.removeItem('habit_tracker_user');
-    // Also clear habits data to simulate multiple user support
     localStorage.removeItem('habits');
+    
+    // Clear any other potential cached data
+    try {
+      // Clear any other authentication-related items
+      Object.keys(localStorage).forEach(key => {
+        if (key.includes('habit_tracker') || key.includes('habit-')) {
+          localStorage.removeItem(key);
+        }
+      });
+      console.log('User logged out successfully');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (

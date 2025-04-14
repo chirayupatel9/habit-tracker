@@ -19,9 +19,20 @@ export default function Home() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
+      console.log('Not authenticated, redirecting to login');
       router.replace('/login');
     }
   }, [isAuthenticated, isLoading, router]);
+
+  // Add an extra check when the component mounts
+  useEffect(() => {
+    // Check localStorage directly as a fallback
+    const storedUser = localStorage.getItem('habit_tracker_user');
+    if (!storedUser && !isLoading) {
+      console.log('No user in localStorage, redirecting to login');
+      router.replace('/login');
+    }
+  }, []);
 
   // Show loading state while checking auth
   if (isLoading) {

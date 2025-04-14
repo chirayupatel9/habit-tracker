@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../lib/AuthContext';
 import { Star, Logout, AccountCircle } from './icons';
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -16,6 +18,8 @@ export default function Header() {
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
+    router.push('/login');
+    window.location.href = '/login';
   };
 
   return (

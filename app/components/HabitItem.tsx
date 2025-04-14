@@ -55,25 +55,31 @@ export default function HabitItem({
   };
 
   return (
-    <div className="material-card p-4 relative">
+    <div className={`material-card p-4 relative ${habit.favorite ? 'favorite-habit-card' : ''}`}>
+      {habit.favorite && (
+        <div className="absolute -top-1 -right-1 bg-amber-400 w-6 h-6 flex items-center justify-center rounded-full shadow-md transform rotate-12">
+          <Star className="text-white text-sm" />
+        </div>
+      )}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <h3 className="text-lg font-medium">{habit.name}</h3>
-          {habit.favorite && (
-            <Star className="text-amber-400 text-lg" />
-          )}
         </div>
         
         <div className="flex gap-2">
           <button
             onClick={handleFavorite}
-            className="p-1 rounded hover:bg-gray-100"
+            className={`p-1.5 rounded-full transition-all duration-200 ${
+              habit.favorite 
+                ? 'bg-amber-100 hover:bg-amber-200 text-amber-500' 
+                : 'hover:bg-gray-100 text-gray-400'
+            }`}
             aria-label={habit.favorite ? "Remove from favorites" : "Add to favorites"}
           >
             {habit.favorite ? (
-              <Star className="text-amber-400" fontSize="small" />
+              <Star className="text-amber-500" fontSize="small" />
             ) : (
-              <StarBorder className="text-gray-400" fontSize="small" />
+              <StarBorder className="text-gray-400 hover:text-amber-400" fontSize="small" />
             )}
           </button>
           
