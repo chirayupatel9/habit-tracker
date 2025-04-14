@@ -7,7 +7,7 @@ export interface Habit {
   streakCount: number;
   completedDates: string[]; // ISO date strings
   createdAt: string;
-  favorite?: boolean;
+  favorite: boolean;
 }
 
 export const habits: Habit[] = [
@@ -52,6 +52,7 @@ export const habits: Habit[] = [
     streakCount: 0,
     completedDates: [],
     createdAt: '2025-04-07',
+    favorite: false,
   },
   {
     id: '4',
@@ -65,5 +66,6 @@ export const habits: Habit[] = [
       '2025-03-31',
     ],
     createdAt: '2025-03-24',
+    favorite: false,
   },
 ]; 
