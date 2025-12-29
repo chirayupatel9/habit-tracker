@@ -1,0 +1,12 @@
+targets:
+  $default:
+    builders:
+      json_serializable:json_serializable:
+        generate_for:
+          exclude:
+            - "lib/services/secure_storage.dart"
+            - "lib/services/api_client.dart"
+            - "lib/features/auth/services/auth_service.dart"
+            - "lib/features/auth/providers/auth_providers.dart"
+            - "lib/core/router/app_router.dart"
+
