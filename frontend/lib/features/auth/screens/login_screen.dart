@@ -34,10 +34,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _passwordController.text,
           );
 
+      // Wait a bit for auth state to update
+      await Future.delayed(const Duration(milliseconds: 100));
+      
       if (mounted) {
+        // Router will handle navigation based on auth state
+        // But we can also explicitly navigate
         context.go('/dashboard');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Login error: $e');
+      print('Stack trace: $stackTrace');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

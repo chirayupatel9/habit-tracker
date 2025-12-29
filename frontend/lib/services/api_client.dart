@@ -44,9 +44,12 @@ class ApiClient {
   ApiClient(this._secureStorage, {String? baseUrl})
       : _baseUrl = baseUrl ?? AppConstants.baseUrl;
 
-  Future<Map<String, String>> _getHeaders({bool includeAuth = true}) async {
-    final headers = {
-      'Content-Type': 'application/json',
+  Future<Map<String, String>> _getHeaders({
+    bool includeAuth = true,
+    bool isFormData = false,
+  }) async {
+    final headers = <String, String>{
+      if (!isFormData) 'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
@@ -92,14 +95,45 @@ class ApiClient {
     String endpoint,
     Map<String, dynamic> body, {
     bool requireAuth = false,
+    bool useFormData = false,
   }) async {
     try {
       final uri = Uri.parse('$_baseUrl$endpoint');
+      
+      // For form data (OAuth2 login), use application/x-www-form-urlencoded
+      if (useFormData) {
+        final formHeaders = await _getHeaders(
+          includeAuth: requireAuth,
+          isFormData: true,
+        );
+        formHeaders['Content-Type'] = 'application/x-www-form-urlencoded';
+        final formBody = body.entries
+            .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value.toString())}')
+            .join('&');
+        final response = await http
+            .post(
+              uri,
+              headers: formHeaders,
+              body: formBody,
+            )
+            .timeout(AppConstants.connectionTimeout);
+        return _handleResponse(response);
+      }
+      
+      // Default: JSON
+      final headers = await _getHeaders(includeAuth: requireAuth);
+      final jsonBody = jsonEncode(body);
+      
+      // Debug: Print request details
+      print('POST $uri');
+      print('Headers: $headers');
+      print('Body: $jsonBody');
+      
       final response = await http
           .post(
             uri,
-            headers: await _getHeaders(includeAuth: requireAuth),
-            body: jsonEncode(body),
+            headers: headers,
+            body: jsonBody,
           )
           .timeout(AppConstants.connectionTimeout);
 
@@ -177,6 +211,10 @@ class ApiClient {
   }
 
   Map<String, dynamic> _handleResponse(http.Response response) {
+    // Debug: Print response details
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) {
         return {};
@@ -189,9 +227,18 @@ class ApiClient {
 
     try {
       final errorBody = jsonDecode(response.body) as Map<String, dynamic>;
-      errorMessage = errorBody['detail'] as String? ??
-          errorBody['message'] as String? ??
-          errorMessage;
+      // FastAPI validation errors are usually in 'detail' field
+      if (errorBody['detail'] is List) {
+        // Multiple validation errors
+        final details = errorBody['detail'] as List;
+        errorMessage = details
+            .map((e) => e is Map ? e['msg'] ?? e.toString() : e.toString())
+            .join(', ');
+      } else {
+        errorMessage = errorBody['detail'] as String? ??
+            errorBody['message'] as String? ??
+            errorMessage;
+      }
     } catch (_) {
       errorMessage = response.body.isNotEmpty
           ? response.body

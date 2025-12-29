@@ -13,7 +13,7 @@ class AppTheme {
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: primaryColor,
-      brightness: Brightness.light,
+      brightness: Brightness.light, 
       primary: primaryColor,
       surface: surfaceColor,
       error: errorColor,

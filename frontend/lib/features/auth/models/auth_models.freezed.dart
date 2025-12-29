@@ -376,6 +376,7 @@ AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AuthResponse {
+  @JsonKey(name: 'access_token')
   String get accessToken => throw _privateConstructorUsedError;
   @JsonKey(name: 'refresh_token')
   String? get refreshToken => throw _privateConstructorUsedError;
@@ -401,7 +402,7 @@ abstract class $AuthResponseCopyWith<$Res> {
       _$AuthResponseCopyWithImpl<$Res, AuthResponse>;
   @useResult
   $Res call(
-      {String accessToken,
+      {@JsonKey(name: 'access_token') String accessToken,
       @JsonKey(name: 'refresh_token') String? refreshToken,
       @JsonKey(name: 'token_type') String tokenType,
       @JsonKey(name: 'user') UserModel? user});
@@ -473,7 +474,7 @@ abstract class _$$AuthResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String accessToken,
+      {@JsonKey(name: 'access_token') String accessToken,
       @JsonKey(name: 'refresh_token') String? refreshToken,
       @JsonKey(name: 'token_type') String tokenType,
       @JsonKey(name: 'user') UserModel? user});
@@ -525,7 +526,7 @@ class __$$AuthResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AuthResponseImpl implements _AuthResponse {
   const _$AuthResponseImpl(
-      {required this.accessToken,
+      {@JsonKey(name: 'access_token') required this.accessToken,
       @JsonKey(name: 'refresh_token') this.refreshToken,
       @JsonKey(name: 'token_type') this.tokenType = 'bearer',
       @JsonKey(name: 'user') this.user});
@@ -534,6 +535,7 @@ class _$AuthResponseImpl implements _AuthResponse {
       _$$AuthResponseImplFromJson(json);
 
   @override
+  @JsonKey(name: 'access_token')
   final String accessToken;
   @override
   @JsonKey(name: 'refresh_token')
@@ -587,7 +589,7 @@ class _$AuthResponseImpl implements _AuthResponse {
 
 abstract class _AuthResponse implements AuthResponse {
   const factory _AuthResponse(
-      {required final String accessToken,
+      {@JsonKey(name: 'access_token') required final String accessToken,
       @JsonKey(name: 'refresh_token') final String? refreshToken,
       @JsonKey(name: 'token_type') final String tokenType,
       @JsonKey(name: 'user') final UserModel? user}) = _$AuthResponseImpl;
@@ -596,6 +598,7 @@ abstract class _AuthResponse implements AuthResponse {
       _$AuthResponseImpl.fromJson;
 
   @override
+  @JsonKey(name: 'access_token')
   String get accessToken;
   @override
   @JsonKey(name: 'refresh_token')

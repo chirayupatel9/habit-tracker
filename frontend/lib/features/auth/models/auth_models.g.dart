@@ -36,7 +36,7 @@ Map<String, dynamic> _$$RegisterRequestImplToJson(
 
 _$AuthResponseImpl _$$AuthResponseImplFromJson(Map<String, dynamic> json) =>
     _$AuthResponseImpl(
-      accessToken: json['accessToken'] as String,
+      accessToken: json['access_token'] as String,
       refreshToken: json['refresh_token'] as String?,
       tokenType: json['token_type'] as String? ?? 'bearer',
       user: json['user'] == null
@@ -46,7 +46,7 @@ _$AuthResponseImpl _$$AuthResponseImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$AuthResponseImplToJson(_$AuthResponseImpl instance) =>
     <String, dynamic>{
-      'accessToken': instance.accessToken,
+      'access_token': instance.accessToken,
       'refresh_token': instance.refreshToken,
       'token_type': instance.tokenType,
       'user': instance.user,
