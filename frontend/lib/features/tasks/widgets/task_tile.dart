@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/utils/app_haptics.dart';
 import '../models/task.dart';
 import '../providers/task_providers.dart';
 
@@ -35,6 +36,7 @@ class TaskTile extends ConsumerWidget {
           onChanged: updateState.isLoading
               ? null
               : (value) {
+                  AppHaptics.selection();
                   // Optimistic update
                   final updatedTask = task.copyWith(isActive: value);
                   ref.read(updateTaskProvider.notifier).updateTask(updatedTask);

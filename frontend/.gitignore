@@ -43,6 +43,7 @@ migrate_working_dir/
 /android/app/profile
 /android/app/release
 
+assets/fonts/
 # # Generated files
 # *.g.dart
 # *.freezed.dart

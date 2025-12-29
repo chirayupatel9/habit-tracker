@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/providers/auth_providers.dart';
+import '../theme/app_icons.dart';
 import 'drawer_item.dart';
 
 class AppDrawer extends ConsumerWidget {
@@ -91,7 +92,7 @@ class AppDrawer extends ConsumerWidget {
                   ref,
                   const DrawerItem(
                     title: 'Profile',
-                    icon: Icons.person,
+                    icon: AppIcons.profile,
                     routeName: '/profile',
                   ),
                   currentLocation,
@@ -101,9 +102,15 @@ class AppDrawer extends ConsumerWidget {
                   ref,
                   const DrawerItem(
                     title: 'Settings',
-                    icon: Icons.settings,
+                    icon: AppIcons.settings,
                     routeName: '/settings',
                   ),
+                  currentLocation,
+                ),
+                _buildDrawerItem(
+                  context,
+                  ref,
+                  DrawerItem.premium,
                   currentLocation,
                 ),
                 _buildDrawerItem(
@@ -155,7 +162,7 @@ class AppDrawer extends ConsumerWidget {
 
   Widget _buildLogoutItem(BuildContext context, WidgetRef ref) {
     return ListTile(
-      leading: const Icon(Icons.logout),
+      leading: const Icon(AppIcons.logout),
       title: const Text('Logout'),
       onTap: () async {
         // Close drawer first

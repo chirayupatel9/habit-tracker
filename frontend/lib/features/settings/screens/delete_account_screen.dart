@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/layout/page_scaffold.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/spacing.dart';
+import '../../../core/utils/app_haptics.dart';
 import '../providers/delete_account_provider.dart';
 
 class DeleteAccountScreen extends ConsumerStatefulWidget {
@@ -60,6 +61,7 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
     }
 
     try {
+      AppHaptics.heavy();
       await ref.read(deleteAccountProvider.notifier).deleteAccount(
             _passwordController.text,
           );

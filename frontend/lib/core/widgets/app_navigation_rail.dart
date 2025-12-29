@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/providers/auth_providers.dart';
+import '../theme/app_icons.dart';
 import 'drawer_item.dart';
 
 class AppNavigationRail extends ConsumerWidget {
@@ -42,7 +43,7 @@ class AppNavigationRail extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.logout,
+                      AppIcons.logout,
                       color: Theme.of(context).colorScheme.error,
                     ),
                     if (isPermanent) ...[
@@ -92,14 +93,19 @@ class AppNavigationRail extends ConsumerWidget {
         label: Text(DrawerItem.tasks.title),
       ),
       NavigationRailDestination(
-        icon: const Icon(Icons.person),
-        selectedIcon: const Icon(Icons.person),
+        icon: const Icon(AppIcons.profile),
+        selectedIcon: const Icon(AppIcons.profile),
         label: const Text('Profile'),
       ),
       NavigationRailDestination(
-        icon: const Icon(Icons.settings),
-        selectedIcon: const Icon(Icons.settings),
+        icon: const Icon(AppIcons.settings),
+        selectedIcon: const Icon(AppIcons.settings),
         label: const Text('Settings'),
+      ),
+      NavigationRailDestination(
+        icon: const Icon(AppIcons.premium),
+        selectedIcon: const Icon(AppIcons.premium),
+        label: const Text('Upgrade'),
       ),
       NavigationRailDestination(
         icon: Icon(DrawerItem.feedback.icon),

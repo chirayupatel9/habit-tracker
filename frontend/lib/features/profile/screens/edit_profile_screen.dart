@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/layout/page_scaffold.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/spacing.dart';
+import '../../../core/utils/app_haptics.dart';
 import '../models/user_profile.dart';
 import '../providers/profile_providers.dart';
 
@@ -47,9 +48,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     }
 
     try {
+      AppHaptics.light();
       await ref.read(updateProfileProvider.notifier).updateProfile(newEmail);
       
       if (mounted) {
+        AppHaptics.medium();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Profile updated successfully'),

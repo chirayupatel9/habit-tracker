@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/layout/page_scaffold.dart';
 import '../../../core/theme/spacing.dart';
 import '../../../core/theme/typography.dart';
+import '../../../core/utils/app_haptics.dart';
 import '../providers/feedback_providers.dart';
 
 class FeedbackScreen extends ConsumerStatefulWidget {
@@ -35,12 +36,14 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
     }
 
     try {
+      AppHaptics.light();
       await ref.read(submitFeedbackProvider.notifier).submitFeedback(
             _selectedRating,
             _messageController.text.trim(),
           );
 
       if (mounted) {
+        AppHaptics.medium();
         setState(() {
           _hasSubmitted = true;
         });

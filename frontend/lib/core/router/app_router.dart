@@ -17,6 +17,7 @@ import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/change_password_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/delete_account_screen.dart';
+import '../../features/premium/screens/premium_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -122,6 +123,11 @@ GoRouter appRouter(AppRouterRef ref) {
           path: '/settings/delete-account',
           name: 'delete-account',
           builder: (context, state) => const DeleteAccountScreen(),
+        ),
+        GoRoute(
+          path: '/premium',
+          name: 'premium',
+          builder: (context, state) => const PremiumScreen(),
         ),
     ],
   );

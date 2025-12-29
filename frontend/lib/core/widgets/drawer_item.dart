@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_icons.dart';
 
 class DrawerItem {
   final String title;
@@ -14,38 +15,44 @@ class DrawerItem {
   // Predefined drawer items
   static const dashboard = DrawerItem(
     title: 'Dashboard',
-    icon: Icons.dashboard,
+    icon: AppIcons.dashboard,
     routeName: '/dashboard',
   );
 
   static const dailyTracking = DrawerItem(
     title: 'Daily Tracking',
-    icon: Icons.today,
+    icon: AppIcons.daily,
     routeName: '/daily-entry',
   );
 
   static const monthlyView = DrawerItem(
     title: 'Monthly View',
-    icon: Icons.calendar_month,
+    icon: AppIcons.monthly,
     routeName: '/monthly',
   );
 
   static const yearlyCalendar = DrawerItem(
     title: 'Yearly Calendar',
-    icon: Icons.view_module,
+    icon: AppIcons.yearly,
     routeName: '/yearly',
   );
 
   static const tasks = DrawerItem(
     title: 'Tasks',
-    icon: Icons.task_alt,
+    icon: AppIcons.tasks,
     routeName: '/tasks',
   );
 
   static const feedback = DrawerItem(
     title: 'Feedback',
-    icon: Icons.feedback,
+    icon: AppIcons.feedback,
     routeName: '/feedback',
+  );
+
+  static const premium = DrawerItem(
+    title: 'Upgrade to Pro',
+    icon: AppIcons.premium,
+    routeName: '/premium',
   );
 }
 

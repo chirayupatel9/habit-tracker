@@ -8,6 +8,7 @@ import '../../../core/widgets/async_state_view.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/theme/spacing.dart';
 import '../../../core/theme/typography.dart';
+import '../../../core/utils/app_haptics.dart';
 import '../models/dashboard_summary.dart';
 import '../providers/dashboard_providers.dart';
 import '../../daily_entry/providers/daily_entry_providers.dart';
@@ -220,6 +221,7 @@ class DashboardScreen extends ConsumerWidget {
         children: [
           ElevatedButton.icon(
             onPressed: () {
+              AppHaptics.light();
               ref.read(selectedDateProvider.notifier).setDate(today);
               context.push('/daily-entry');
             },

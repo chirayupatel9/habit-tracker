@@ -5,7 +5,10 @@ import '../../../core/layout/page_scaffold.dart';
 import '../../../core/widgets/async_state_view.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/section.dart';
+import '../../../core/widgets/premium_badge.dart';
 import '../../../core/theme/spacing.dart';
+import '../../../core/theme/app_icons.dart';
+import '../../../core/utils/app_haptics.dart';
 import '../models/app_settings.dart';
 import '../providers/settings_provider.dart';
 
@@ -48,6 +51,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   subtitle: const Text('Receive daily reminders and summaries'),
                   value: settings.notificationsEnabled,
                   onChanged: (value) {
+                    AppHaptics.selection();
                     _updateSettings(
                       settings.copyWith(notificationsEnabled: value),
                     );
@@ -71,6 +75,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     value: settings.weeklySummaryEnabled,
                     onChanged: settings.notificationsEnabled
                         ? (value) {
+                            AppHaptics.selection();
                             _updateSettings(
                               settings.copyWith(weeklySummaryEnabled: value),
                             );
@@ -84,6 +89,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     value: settings.monthlySummaryEnabled,
                     onChanged: settings.notificationsEnabled
                         ? (value) {
+                            AppHaptics.selection();
                             _updateSettings(
                               settings.copyWith(monthlySummaryEnabled: value),
                             );
@@ -96,6 +102,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ),
 
+        // Premium Section
+        Section(
+          title: 'Premium',
+          child: AppCard(
+            child: ListTile(
+              leading: Icon(
+                AppIcons.premium,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              title: const Text('Upgrade to Pro'),
+              subtitle: const Text('Unlock advanced features and insights'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const PremiumBadge(label: 'PRO'),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.chevron_right),
+                ],
+              ),
+              onTap: () {
+                AppHaptics.light();
+                context.push('/premium');
+              },
+            ),
+          ),
+        ),
+
+        AppSpacing.heightLg,
+
         // App Section
         Section(
           title: 'App',
@@ -106,7 +141,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   title: const Text('Theme'),
                   subtitle: Text(_getThemeModeLabel(settings.themeMode)),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _selectThemeMode(settings),
+                  onTap: () {
+                    AppHaptics.selection();
+                    _selectThemeMode(settings);
+                  },
                 ),
                 const Divider(height: 1),
                 ListTile(
@@ -114,7 +152,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   subtitle: Text(_getFirstDayOfWeekLabel(
                       settings.firstDayOfWeek)),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _selectFirstDayOfWeek(settings),
+                  onTap: () {
+                    AppHaptics.selection();
+                    _selectFirstDayOfWeek(settings);
+                  },
                 ),
               ],
             ),

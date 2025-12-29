@@ -149,26 +149,32 @@ class LightTheme {
       ),
       
       // Text Theme
+      fontFamily: 'NotoSans',
       textTheme: TextTheme(
         headlineSmall: TextStyle(
+          fontFamily: 'NotoSans',
           color: AppColors.lightTextPrimary,
           fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
         titleLarge: TextStyle(
+          fontFamily: 'NotoSans',
           color: AppColors.lightTextPrimary,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
         bodyLarge: TextStyle(
+          fontFamily: 'NotoSans',
           color: AppColors.lightTextPrimary,
           fontSize: 16,
         ),
         bodyMedium: TextStyle(
+          fontFamily: 'NotoSans',
           color: AppColors.lightTextSecondary,
           fontSize: 14,
         ),
         bodySmall: TextStyle(
+          fontFamily: 'NotoSans',
           color: AppColors.lightTextSecondary,
           fontSize: 12,
         ),
