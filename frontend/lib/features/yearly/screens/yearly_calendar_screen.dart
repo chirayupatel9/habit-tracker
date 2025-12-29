@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/widgets/app_drawer.dart';
+import '../../../core/layout/page_scaffold.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/async_state_view.dart';
+import '../../../core/theme/spacing.dart';
+import '../../../core/theme/typography.dart';
 import '../providers/yearly_providers.dart';
 import '../widgets/month_calendar_widget.dart';
 import '../../daily_entry/providers/daily_entry_providers.dart';
@@ -42,76 +46,37 @@ class YearlyCalendarScreen extends ConsumerWidget {
     final trackingAsync = ref.watch(yearlyTrackingProvider(selectedYear));
     final isCurrentYear = selectedYear == DateTime.now().year;
 
-    return Scaffold(
-      drawer: const AppDrawer(),
-      appBar: AppBar(
-        title: const Text('Yearly Calendar'),
-      ),
-      body: trackingAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 48,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Error loading yearly data',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString().replaceAll('Exception: ', ''),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  ref.invalidate(yearlyTrackingProvider(selectedYear));
-                },
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-        data: (trackingData) => SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Year Header with Navigation
-                _buildYearHeader(context, ref, selectedYear, isCurrentYear),
-                const SizedBox(height: 24),
+    return PageScaffold(
+      title: 'Yearly Calendar',
+      child: AsyncStateView<Map<DateTime, bool>>(
+        value: trackingAsync,
+        onRetry: () {
+          ref.invalidate(yearlyTrackingProvider(selectedYear));
+        },
+        data: (trackingData) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Year Header with Navigation
+            _buildYearHeader(context, ref, selectedYear, isCurrentYear),
+            AppSpacing.heightLg,
 
-                // Legend
-                _buildLegend(context),
-                const SizedBox(height: 24),
+            // Legend
+            _buildLegend(context),
+            AppSpacing.heightLg,
 
-                // Calendar Grid (12 months)
-                ...List.generate(12, (index) {
-                  final month = index + 1;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _MonthCalendarWithNavigation(
-                      year: selectedYear,
-                      month: month,
-                      trackingData: trackingData,
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ),
+            // Calendar Grid (12 months)
+            ...List.generate(12, (index) {
+              final month = index + 1;
+              return Padding(
+                padding: EdgeInsets.only(bottom: AppSpacing.md),
+                child: _MonthCalendarWithNavigation(
+                  year: selectedYear,
+                  month: month,
+                  trackingData: trackingData,
+                ),
+              );
+            }),
+          ],
         ),
       ),
     );
@@ -123,82 +88,74 @@ class YearlyCalendarScreen extends ConsumerWidget {
     int selectedYear,
     bool isCurrentYear,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () {
-                ref.read(selectedYearProvider.notifier).previousYear();
-              },
-              icon: const Icon(Icons.chevron_left),
-            ),
-            Column(
-              children: [
+    return AppCard(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            onPressed: () {
+              ref.read(selectedYearProvider.notifier).previousYear();
+            },
+            icon: const Icon(Icons.chevron_left),
+          ),
+          Column(
+            children: [
+              Text(
+                selectedYear.toString(),
+                style: Theme.of(context).pageTitle,
+              ),
+              if (isCurrentYear)
                 Text(
-                  selectedYear.toString(),
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  'Current Year',
+                  style: Theme.of(context).caption.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                 ),
-                if (isCurrentYear)
-                  Text(
-                    'Current Year',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                  ),
-              ],
-            ),
-            Row(
-              children: [
-                if (!isCurrentYear)
-                  TextButton(
-                    onPressed: () {
-                      ref.read(selectedYearProvider.notifier).resetToCurrent();
-                    },
-                    child: const Text('This Year'),
-                  ),
-                IconButton(
+            ],
+          ),
+          Row(
+            children: [
+              if (!isCurrentYear)
+                TextButton(
                   onPressed: () {
-                    ref.read(selectedYearProvider.notifier).nextYear();
+                    ref.read(selectedYearProvider.notifier).resetToCurrent();
                   },
-                  icon: const Icon(Icons.chevron_right),
+                  child: const Text('This Year'),
                 ),
-              ],
-            ),
-          ],
-        ),
+              IconButton(
+                onPressed: () {
+                  ref.read(selectedYearProvider.notifier).nextYear();
+                },
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildLegend(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildLegendItem(
-              context,
-              Colors.green.shade400,
-              'Tracked',
-            ),
-            _buildLegendItem(
-              context,
-              Colors.red.shade300,
-              'Missed',
-            ),
-            _buildLegendItem(
-              context,
-              Colors.grey.shade300,
-              'Future',
-            ),
-          ],
-        ),
+    return AppCard(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildLegendItem(
+            context,
+            Colors.green.shade400,
+            'Tracked',
+          ),
+          _buildLegendItem(
+            context,
+            Colors.red.shade300,
+            'Missed',
+          ),
+          _buildLegendItem(
+            context,
+            Colors.grey.shade300,
+            'Future',
+          ),
+        ],
       ),
     );
   }
@@ -218,10 +175,10 @@ class YearlyCalendarScreen extends ConsumerWidget {
             borderRadius: BorderRadius.circular(4),
           ),
         ),
-        const SizedBox(width: 8),
+        AppSpacing.widthSm,
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context).caption,
         ),
       ],
     );

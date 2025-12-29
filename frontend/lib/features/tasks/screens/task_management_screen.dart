@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/widgets/app_drawer.dart';
+import '../../../core/layout/page_scaffold.dart';
+import '../../../core/widgets/async_state_view.dart';
+import '../../../core/theme/spacing.dart';
+import '../models/task.dart';
 import '../providers/task_providers.dart';
 import '../widgets/task_tile.dart';
 
@@ -108,89 +111,8 @@ class TaskManagementScreen extends ConsumerWidget {
       },
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Tasks'),
-      ),
-      drawer: const AppDrawer(),
-      body: tasksAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 48,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Error loading tasks',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString().replaceAll('Exception: ', ''),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  ref.invalidate(tasksProvider);
-                },
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-        data: (tasks) {
-          if (tasks.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.task_alt,
-                    size: 64,
-                    color: Colors.grey.shade400,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No tasks yet',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Tap the + button to add your first task',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: tasks.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: TaskTile(task: tasks[index]),
-              );
-            },
-          );
-        },
-      ),
+    return PageScaffold(
+      title: 'My Tasks',
       floatingActionButton: FloatingActionButton(
         onPressed: createState.isLoading
             ? null
@@ -205,6 +127,29 @@ class TaskManagementScreen extends ConsumerWidget {
                 ),
               )
             : const Icon(Icons.add),
+      ),
+      child: AsyncStateView<List<Task>>(
+        value: tasksAsync,
+        onRetry: () {
+          ref.invalidate(tasksProvider);
+        },
+        emptyState: EmptyStateConfig(
+          icon: Icons.task_alt,
+          title: 'No tasks yet',
+          description: 'Tap the + button to add your first task',
+        ),
+        data: (tasks) {
+          return Column(
+            children: [
+              ...tasks.map((task) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: TaskTile(task: task),
+                );
+              }),
+            ],
+          );
+        },
       ),
     );
   }

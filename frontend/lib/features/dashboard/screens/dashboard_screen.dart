@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/errors/app_error.dart';
-import '../../../core/errors/error_mapper.dart';
+import '../../../core/layout/page_scaffold.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/section.dart';
+import '../../../core/widgets/async_state_view.dart';
 import '../../../core/widgets/empty_state.dart';
-import '../../../core/widgets/error_view.dart';
-import '../../../core/layout/adaptive_scaffold.dart';
-import '../../../core/widgets/animated_switcher_wrapper.dart';
+import '../../../core/theme/spacing.dart';
+import '../../../core/theme/typography.dart';
 import '../models/dashboard_summary.dart';
 import '../providers/dashboard_providers.dart';
-import '../widgets/summary_card.dart';
 import '../../daily_entry/providers/daily_entry_providers.dart';
 import '../../monthly/providers/monthly_providers.dart';
 
@@ -33,25 +33,25 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(dashboardSummaryProvider);
 
-    return AdaptiveScaffold(
+    return PageScaffold(
       title: 'Dashboard',
-      body: AnimatedSwitcherWrapper(
-        child: summaryAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) {
-          final appError = error is AppError
-              ? error
-              : ErrorMapper.fromException(error as Exception);
-          
-          return ErrorView(
-            error: appError,
-            onRetry: () {
-              ref.invalidate(dashboardSummaryProvider);
-            },
-          );
+      child: AsyncStateView<DashboardSummary>(
+        value: summaryAsync,
+        onRetry: () {
+          ref.invalidate(dashboardSummaryProvider);
         },
+        emptyState: EmptyStateConfig(
+          icon: Icons.dashboard_outlined,
+          title: 'Welcome to Habit Tracker',
+          description:
+              'Start tracking your habits to see insights and progress here.',
+          actionLabel: 'Track Today',
+          onAction: () {
+            final today = DateTime.now();
+            ref.read(selectedDateProvider.notifier).setDate(today);
+            context.push('/daily-entry');
+          },
+        ),
         data: (summary) {
           // Check if all data is empty
           final hasNoData = summary.randomPastMoment == null &&
@@ -74,50 +74,39 @@ class DashboardScreen extends ConsumerWidget {
             );
           }
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Greeting Header
-                  _buildGreetingHeader(context),
-                  const SizedBox(height: 24),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Greeting Header
+              _buildGreetingHeader(context),
+              AppSpacing.heightLg,
 
-                  // Random Past Moment
-                  _buildRandomMomentCard(context, summary),
-                  const SizedBox(height: 16),
+              // Random Past Moment
+              _buildRandomMomentCard(context, summary),
+              AppSpacing.heightMd,
 
-                  // Sleep Analysis Card
-                  _buildSleepAnalysisCard(context, summary),
-                  const SizedBox(height: 16),
+              // Sleep Analysis Card
+              _buildSleepAnalysisCard(context, summary),
+              AppSpacing.heightMd,
 
-                  // Task Consistency Card
-                  _buildTaskConsistencyCard(context, summary),
-                  const SizedBox(height: 24),
+              // Task Consistency Card
+              _buildTaskConsistencyCard(context, summary),
+              AppSpacing.heightLg,
 
-                  // Quick Actions
-                  _buildQuickActions(context, ref),
-                ],
-              ),
-            ),
+              // Quick Actions
+              _buildQuickActions(context, ref),
+            ],
           );
         },
-      ),
       ),
     );
   }
 
   Widget _buildGreetingHeader(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Text(
-          _getGreeting(),
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
+    return AppCard(
+      child: Text(
+        _getGreeting(),
+        style: Theme.of(context).pageTitle,
       ),
     );
   }
@@ -126,21 +115,17 @@ class DashboardScreen extends ConsumerWidget {
     BuildContext context,
     DashboardSummary summary,
   ) {
-    return SummaryCard(
+    return AppCard(
       title: 'Random Past Moment',
       icon: Icons.auto_awesome,
-      iconColor: Theme.of(context).colorScheme.primary,
       child: summary.randomPastMoment != null
           ? Text(
               summary.randomPastMoment!,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).body,
             )
           : Text(
               'No moments recorded yet',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade600,
-                    fontStyle: FontStyle.italic,
-                  ),
+              style: Theme.of(context).subtle,
             ),
     );
   }
@@ -149,26 +134,25 @@ class DashboardScreen extends ConsumerWidget {
     BuildContext context,
     DashboardSummary summary,
   ) {
-    return SummaryCard(
+    return AppCard(
       title: 'Sleep Analysis',
       icon: Icons.bedtime,
-      iconColor: Theme.of(context).colorScheme.primary,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (summary.averageSleep7Days != null)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: AppSpacing.verticalSm,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Last 7 days:',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).caption,
                   ),
                   Text(
                     '${summary.averageSleep7Days!.toStringAsFixed(1)} hours',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: Theme.of(context).caption.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                   ),
@@ -177,17 +161,17 @@ class DashboardScreen extends ConsumerWidget {
             ),
           if (summary.averageSleep30Days != null)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: AppSpacing.verticalSm,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Last 30 days:',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).caption,
                   ),
                   Text(
                     '${summary.averageSleep30Days!.toStringAsFixed(1)} hours',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: Theme.of(context).caption.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                   ),
@@ -198,10 +182,7 @@ class DashboardScreen extends ConsumerWidget {
               summary.averageSleep30Days == null)
             Text(
               'No sleep data available',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade600,
-                    fontStyle: FontStyle.italic,
-                  ),
+              style: Theme.of(context).subtle,
             ),
         ],
       ),
@@ -212,21 +193,17 @@ class DashboardScreen extends ConsumerWidget {
     BuildContext context,
     DashboardSummary summary,
   ) {
-    return SummaryCard(
+    return AppCard(
       title: 'Task Consistency',
       icon: Icons.checklist,
-      iconColor: Theme.of(context).colorScheme.primary,
       child: summary.taskConsistencyPercentage > 0
           ? Text(
               'All tasks completed on ${summary.taskConsistencyPercentage.toStringAsFixed(0)}% of tracked days',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).body,
             )
           : Text(
               'No task data available',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade600,
-                    fontStyle: FontStyle.italic,
-                  ),
+              style: Theme.of(context).subtle,
             ),
     );
   }
@@ -235,34 +212,31 @@ class DashboardScreen extends ConsumerWidget {
     final today = DateTime.now();
     final currentMonth = DateTime(today.year, today.month, 1);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton.icon(
-          onPressed: () {
-            ref.read(selectedDateProvider.notifier).setDate(today);
-            context.push('/daily-entry');
-          },
-          icon: const Icon(Icons.edit_calendar),
-          label: const Text('Track Today'),
-        ),
-        const SizedBox(height: 12),
-        OutlinedButton.icon(
-          onPressed: () {
-            ref.read(selectedMonthProvider.notifier).setMonth(currentMonth);
-            context.push('/monthly');
-          },
-          icon: const Icon(Icons.calendar_month),
-          label: const Text('View Month'),
-        ),
-      ],
+    return Section(
+      title: 'Quick Actions',
+      spacingAfter: 0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ElevatedButton.icon(
+            onPressed: () {
+              ref.read(selectedDateProvider.notifier).setDate(today);
+              context.push('/daily-entry');
+            },
+            icon: const Icon(Icons.edit_calendar),
+            label: const Text('Track Today'),
+          ),
+          AppSpacing.heightSm,
+          OutlinedButton.icon(
+            onPressed: () {
+              ref.read(selectedMonthProvider.notifier).setMonth(currentMonth);
+              context.push('/monthly');
+            },
+            icon: const Icon(Icons.calendar_month),
+            label: const Text('View Month'),
+          ),
+        ],
+      ),
     );
   }
 }

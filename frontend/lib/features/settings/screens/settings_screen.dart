@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/layout/adaptive_scaffold.dart';
+import '../../../core/layout/page_scaffold.dart';
+import '../../../core/widgets/async_state_view.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/section.dart';
 import '../models/app_settings.dart';
 import '../providers/settings_provider.dart';
 
@@ -16,121 +19,107 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(appSettingsStateProvider);
 
-    return AdaptiveScaffold(
+    return PageScaffold(
       title: 'Settings',
-      body: settingsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error loading settings: $error'),
-        ),
+      child: AsyncStateView<AppSettings>(
+        value: settingsAsync,
+        onRetry: () {
+          ref.invalidate(appSettingsStateProvider);
+        },
         data: (settings) => _buildSettingsContent(settings),
       ),
     );
   }
 
   Widget _buildSettingsContent(AppSettings settings) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Notifications Section
-            _buildSectionHeader('Notifications'),
-            Card(
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    title: const Text('Enable Notifications'),
-                    subtitle: const Text('Receive daily reminders and summaries'),
-                    value: settings.notificationsEnabled,
-                    onChanged: (value) {
-                      _updateSettings(
-                        settings.copyWith(notificationsEnabled: value),
-                      );
-                    },
-                  ),
-                  if (settings.notificationsEnabled) ...[
-                    const Divider(height: 1),
-                    ListTile(
-                      title: const Text('Daily Reminder Time'),
-                      subtitle: Text(
-                        _formatTime(settings.dailyReminderHour,
-                            settings.dailyReminderMinute),
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _selectDailyReminderTime(settings),
-                    ),
-                    const Divider(height: 1),
-                    SwitchListTile(
-                      title: const Text('Weekly Summary'),
-                      subtitle: const Text('Receive summary every Sunday'),
-                      value: settings.weeklySummaryEnabled,
-                      onChanged: settings.notificationsEnabled
-                          ? (value) {
-                              _updateSettings(
-                                settings.copyWith(weeklySummaryEnabled: value),
-                              );
-                            }
-                          : null,
-                    ),
-                    const Divider(height: 1),
-                    SwitchListTile(
-                      title: const Text('Monthly Summary'),
-                      subtitle: const Text('Receive summary at month end'),
-                      value: settings.monthlySummaryEnabled,
-                      onChanged: settings.notificationsEnabled
-                          ? (value) {
-                              _updateSettings(
-                                settings.copyWith(monthlySummaryEnabled: value),
-                              );
-                            }
-                          : null,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // App Section
-            _buildSectionHeader('App'),
-            Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    title: const Text('Theme'),
-                    subtitle: Text(_getThemeModeLabel(settings.themeMode)),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _selectThemeMode(settings),
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Notifications Section
+        Section(
+          title: 'Notifications',
+          child: AppCard(
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: const Text('Enable Notifications'),
+                  subtitle: const Text('Receive daily reminders and summaries'),
+                  value: settings.notificationsEnabled,
+                  onChanged: (value) {
+                    _updateSettings(
+                      settings.copyWith(notificationsEnabled: value),
+                    );
+                  },
+                ),
+                if (settings.notificationsEnabled) ...[
                   const Divider(height: 1),
                   ListTile(
-                    title: const Text('First Day of Week'),
-                    subtitle: Text(_getFirstDayOfWeekLabel(
-                        settings.firstDayOfWeek)),
+                    title: const Text('Daily Reminder Time'),
+                    subtitle: Text(
+                      _formatTime(settings.dailyReminderHour,
+                          settings.dailyReminderMinute),
+                    ),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _selectFirstDayOfWeek(settings),
+                    onTap: () => _selectDailyReminderTime(settings),
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: const Text('Weekly Summary'),
+                    subtitle: const Text('Receive summary every Sunday'),
+                    value: settings.weeklySummaryEnabled,
+                    onChanged: settings.notificationsEnabled
+                        ? (value) {
+                            _updateSettings(
+                              settings.copyWith(weeklySummaryEnabled: value),
+                            );
+                          }
+                        : null,
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: const Text('Monthly Summary'),
+                    subtitle: const Text('Receive summary at month end'),
+                    value: settings.monthlySummaryEnabled,
+                    onChanged: settings.notificationsEnabled
+                        ? (value) {
+                            _updateSettings(
+                              settings.copyWith(monthlySummaryEnabled: value),
+                            );
+                          }
+                        : null,
                   ),
                 ],
-              ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
-    );
-  }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+        // App Section
+        Section(
+          title: 'App',
+          spacingAfter: 0,
+          child: AppCard(
+            child: Column(
+              children: [
+                ListTile(
+                  title: const Text('Theme'),
+                  subtitle: Text(_getThemeModeLabel(settings.themeMode)),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _selectThemeMode(settings),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  title: const Text('First Day of Week'),
+                  subtitle: Text(_getFirstDayOfWeekLabel(
+                      settings.firstDayOfWeek)),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _selectFirstDayOfWeek(settings),
+                ),
+              ],
             ),
-      ),
+          ),
+        ),
+      ],
     );
   }
 

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../core/widgets/app_drawer.dart';
+import '../../../core/layout/page_scaffold.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/theme/spacing.dart';
+import '../../../core/theme/typography.dart';
 import '../models/daily_entry.dart';
 import '../models/task_completion.dart';
 import '../providers/daily_entry_providers.dart';
@@ -170,124 +173,114 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
     final isLoading = saveState.isLoading;
     final isSaving = isLoading;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Daily Entry'),
-      ),
-      drawer: const AppDrawer(),
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: KeyboardAwareScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Date Header
-                  _buildDateHeader(context, selectedDate),
-                  const SizedBox(height: 24),
+    return PageScaffold(
+      title: 'Daily Entry',
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Date Header
+            _buildDateHeader(context, selectedDate),
+            AppSpacing.heightLg,
 
-                  // Moment of the Day
-                  TextFormField(
-                    controller: _momentController,
-                    decoration: const InputDecoration(
-                      labelText: 'Moment of the Day',
-                      hintText: 'How was your day?',
-                      prefixIcon: Icon(Icons.calendar_today_outlined),
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Tasks Section
-                  tasksAsync.when(
-                    loading: () => const CircularProgressIndicator(),
-                    error: (_, __) => const Text('Error loading tasks'),
-                    data: (tasks) => _buildTasksSection(tasks),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Sleep Hours
-                  TextFormField(
-                    controller: _sleepHoursController,
-                    decoration: const InputDecoration(
-                      labelText: 'Sleep (hours)',
-                      hintText: '8.5',
-                      prefixIcon: Icon(Icons.bedtime_outlined),
-                    ),
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d+\.?\d{0,2}'),
-                      ),
-                    ],
-                    textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value != null && value.isNotEmpty) {
-                        final hours = double.tryParse(value);
-                        if (hours == null) {
-                          return 'Please enter a valid number';
-                        }
-                        if (hours < 0 || hours > 24) {
-                          return 'Sleep hours must be between 0 and 24';
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Notes
-                  TextFormField(
-                    controller: _noteController,
-                    decoration: const InputDecoration(
-                      labelText: 'Notes (optional)',
-                      hintText: 'Add any additional notes...',
-                      prefixIcon: Icon(Icons.note_outlined),
-                      alignLabelWithHint: true,
-                    ),
-                    maxLines: 4,
-                    textInputAction: TextInputAction.newline,
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Save Button
-                  ElevatedButton(
-                    onPressed: (isSaving || entryAsync.isLoading)
-                        ? null
-                        : _handleSave,
-                    child: isSaving
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : const Text('Save Entry'),
-                  ),
-
-                  // Error message
-                  if (entryAsync.hasError)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Text(
-                        'Error loading entry: ${entryAsync.error}',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                ],
+            // Moment of the Day
+            TextFormField(
+              controller: _momentController,
+              decoration: const InputDecoration(
+                labelText: 'Moment of the Day',
+                hintText: 'How was your day?',
+                prefixIcon: Icon(Icons.calendar_today_outlined),
               ),
+              textInputAction: TextInputAction.next,
             ),
-          ),
+            AppSpacing.heightMd,
+
+            // Tasks Section
+            tasksAsync.when(
+              loading: () => const CircularProgressIndicator(),
+              error: (_, __) => const Text('Error loading tasks'),
+              data: (tasks) => _buildTasksSection(tasks),
+            ),
+            AppSpacing.heightMd,
+
+            // Sleep Hours
+            TextFormField(
+              controller: _sleepHoursController,
+              decoration: const InputDecoration(
+                labelText: 'Sleep (hours)',
+                hintText: '8.5',
+                prefixIcon: Icon(Icons.bedtime_outlined),
+              ),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^\d+\.?\d{0,2}'),
+                ),
+              ],
+              textInputAction: TextInputAction.next,
+              validator: (value) {
+                if (value != null && value.isNotEmpty) {
+                  final hours = double.tryParse(value);
+                  if (hours == null) {
+                    return 'Please enter a valid number';
+                  }
+                  if (hours < 0 || hours > 24) {
+                    return 'Sleep hours must be between 0 and 24';
+                  }
+                }
+                return null;
+              },
+            ),
+            AppSpacing.heightMd,
+
+            // Notes
+            TextFormField(
+              controller: _noteController,
+              decoration: const InputDecoration(
+                labelText: 'Notes (optional)',
+                hintText: 'Add any additional notes...',
+                prefixIcon: Icon(Icons.note_outlined),
+                alignLabelWithHint: true,
+              ),
+              maxLines: 4,
+              textInputAction: TextInputAction.newline,
+            ),
+            AppSpacing.heightXl,
+
+            // Save Button
+            ElevatedButton(
+              onPressed: (isSaving || entryAsync.isLoading)
+                  ? null
+                  : _handleSave,
+              child: isSaving
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text('Save Entry'),
+            ),
+
+            // Error message
+            if (entryAsync.hasError)
+              Padding(
+                padding: EdgeInsets.only(top: AppSpacing.md),
+                child: Text(
+                  'Error loading entry: ${entryAsync.error}',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -296,51 +289,44 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
   Widget _buildDateHeader(BuildContext context, DateTime selectedDate) {
     final isToday = _isToday(selectedDate);
 
-    return Card(
+    return AppCard(
       child: InkWell(
         onTap: () => _selectDate(context),
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _formatDisplayDate(selectedDate),
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _formatDisplayDate(selectedDate),
+                  style: Theme.of(context).pageTitle,
+                ),
+                AppSpacing.heightXs,
+                Text(
+                  DateFormat('EEEE').format(selectedDate),
+                  style: Theme.of(context).subtle,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                if (!isToday)
+                  TextButton.icon(
+                    onPressed: () {
+                      ref.read(selectedDateProvider.notifier).resetToToday();
+                    },
+                    icon: const Icon(Icons.today),
+                    label: const Text('Today'),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    DateFormat('EEEE').format(selectedDate),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  if (!isToday)
-                    TextButton.icon(
-                      onPressed: () {
-                        ref.read(selectedDateProvider.notifier).resetToToday();
-                      },
-                      icon: const Icon(Icons.today),
-                      label: const Text('Today'),
-                    ),
-                  Icon(
-                    Icons.calendar_today,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ],
-              ),
-            ],
-          ),
+                Icon(
+                  Icons.calendar_today,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -354,24 +340,19 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
       children: [
         Text(
           'Tasks',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(context).sectionTitle,
         ),
-        const SizedBox(height: 12),
+        AppSpacing.heightSm,
         if (activeTasks.isEmpty)
           Text(
             'No active tasks. Add tasks in the Tasks screen.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.shade600,
-                  fontStyle: FontStyle.italic,
-                ),
+            style: Theme.of(context).subtle,
           )
         else
           ...activeTasks.map((task) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Card(
+              padding: EdgeInsets.only(bottom: AppSpacing.sm),
+              child: AppCard(
                 child: CheckboxListTile(
                   title: Text(task.name),
                   value: _taskCompletions[task.id] ?? false,
@@ -381,6 +362,7 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
                     });
                   },
                   controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
             );
@@ -397,20 +379,4 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
   }
 }
 
-/// Keyboard-aware scrollable widget
-class KeyboardAwareScrollView extends StatelessWidget {
-  final Widget child;
-
-  const KeyboardAwareScrollView({
-    super.key,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: child,
-    );
-  }
-}
 

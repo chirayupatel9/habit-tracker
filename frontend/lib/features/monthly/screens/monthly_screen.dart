@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../core/widgets/app_drawer.dart';
+import '../../../core/layout/page_scaffold.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/async_state_view.dart';
+import '../../../core/theme/spacing.dart';
+import '../../../core/theme/typography.dart';
 import '../models/monthly_summary.dart';
 import '../providers/monthly_providers.dart';
 import '../../daily_entry/providers/daily_entry_providers.dart';
@@ -17,47 +21,13 @@ class MonthlyScreen extends ConsumerWidget {
     final month = selectedMonth.month;
     final summaryAsync = ref.watch(monthlySummaryProvider(year, month));
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Monthly View'),
-      ),
-      drawer: const AppDrawer(),
-      body: summaryAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 48,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Error loading monthly summary',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString().replaceAll('Exception: ', ''),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  ref.invalidate(monthlySummaryProvider(year, month));
-                },
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
+    return PageScaffold(
+      title: 'Monthly View',
+      child: AsyncStateView<List<MonthlyAggregation>>(
+        value: summaryAsync,
+        onRetry: () {
+          ref.invalidate(monthlySummaryProvider(year, month));
+        },
         data: (summary) => _buildContent(context, ref, summary, selectedMonth),
       ),
     );
@@ -75,43 +45,38 @@ class MonthlyScreen extends ConsumerWidget {
     final averageSleep = _getAverageSleep(aggregations);
     final dailyNotes = _getDailyNotes(aggregations);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Month Header with Navigation
-            _buildMonthHeader(context, ref, selectedMonth),
-            const SizedBox(height: 24),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Month Header with Navigation
+        _buildMonthHeader(context, ref, selectedMonth),
+        AppSpacing.heightLg,
 
-            // Random Moment Section
-            _buildRandomMomentSection(context, randomMoment),
-            const SizedBox(height: 24),
+        // Random Moment Section
+        _buildRandomMomentSection(context, randomMoment),
+        AppSpacing.heightLg,
 
-            // Task Summary Section
-            _buildTaskSummarySection(
-              context,
-              ref,
-              taskCompletionSummary,
-              selectedMonth,
-            ),
-            const SizedBox(height: 24),
-
-            // Average Sleep Section
-            _buildAverageSleepSection(context, averageSleep),
-            const SizedBox(height: 24),
-
-            // Daily Notes List
-            _buildDailyNotesSection(
-              context,
-              ref,
-              dailyNotes,
-              selectedMonth,
-            ),
-          ],
+        // Task Summary Section
+        _buildTaskSummarySection(
+          context,
+          ref,
+          taskCompletionSummary,
+          selectedMonth,
         ),
-      ),
+        AppSpacing.heightLg,
+
+        // Average Sleep Section
+        _buildAverageSleepSection(context, averageSleep),
+        AppSpacing.heightLg,
+
+        // Daily Notes List
+        _buildDailyNotesSection(
+          context,
+          ref,
+          dailyNotes,
+          selectedMonth,
+        ),
+      ],
     );
   }
 
@@ -168,54 +133,49 @@ class MonthlyScreen extends ConsumerWidget {
     final monthName = DateFormat('MMMM yyyy').format(selectedMonth);
     final isCurrentMonth = _isCurrentMonth(selectedMonth);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () {
-                ref.read(selectedMonthProvider.notifier).previousMonth();
-              },
-              icon: const Icon(Icons.chevron_left),
-            ),
-            Column(
-              children: [
+    return AppCard(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            onPressed: () {
+              ref.read(selectedMonthProvider.notifier).previousMonth();
+            },
+            icon: const Icon(Icons.chevron_left),
+          ),
+          Column(
+            children: [
+              Text(
+                monthName,
+                style: Theme.of(context).pageTitle,
+              ),
+              if (isCurrentMonth)
                 Text(
-                  monthName,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  'Current Month',
+                  style: Theme.of(context).caption.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                 ),
-                if (isCurrentMonth)
-                  Text(
-                    'Current Month',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                  ),
-              ],
-            ),
-            Row(
-              children: [
-                if (!isCurrentMonth)
-                  TextButton(
-                    onPressed: () {
-                      ref.read(selectedMonthProvider.notifier).resetToCurrent();
-                    },
-                    child: const Text('Today'),
-                  ),
-                IconButton(
+            ],
+          ),
+          Row(
+            children: [
+              if (!isCurrentMonth)
+                TextButton(
                   onPressed: () {
-                    ref.read(selectedMonthProvider.notifier).nextMonth();
+                    ref.read(selectedMonthProvider.notifier).resetToCurrent();
                   },
-                  icon: const Icon(Icons.chevron_right),
+                  child: const Text('Today'),
                 ),
-              ],
-            ),
-          ],
-        ),
+              IconButton(
+                onPressed: () {
+                  ref.read(selectedMonthProvider.notifier).nextMonth();
+                },
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -224,51 +184,28 @@ class MonthlyScreen extends ConsumerWidget {
     BuildContext context,
     ({String date, String moment})? randomMoment,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Random Moment of the Month',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
+    return AppCard(
+      title: 'Random Moment of the Month',
+      icon: Icons.auto_awesome,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (randomMoment != null) ...[
+            Text(
+              randomMoment.moment,
+              style: Theme.of(context).body,
             ),
-            const SizedBox(height: 16),
-            if (randomMoment != null) ...[
-              Text(
-                randomMoment.moment,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _formatDateSubtitle(randomMoment.date),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey.shade600,
-                      fontStyle: FontStyle.italic,
-                    ),
-              ),
-            ] else
-              Text(
-                'No moments recorded this month',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                      fontStyle: FontStyle.italic,
-                    ),
-              ),
-          ],
-        ),
+            AppSpacing.heightSm,
+            Text(
+              _formatDateSubtitle(randomMoment.date),
+              style: Theme.of(context).subtle,
+            ),
+          ] else
+            Text(
+              'No moments recorded this month',
+              style: Theme.of(context).subtle,
+            ),
+        ],
       ),
     );
   }
@@ -279,67 +216,45 @@ class MonthlyScreen extends ConsumerWidget {
     Map<String, int>? taskCompletionSummary,
     DateTime selectedMonth,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.checklist,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Task Summary',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+    return AppCard(
+      title: 'Task Summary',
+      icon: Icons.checklist,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (taskCompletionSummary != null && taskCompletionSummary.isNotEmpty)
+            ...taskCompletionSummary.entries.map((entry) {
+              final taskName = entry.key;
+              final completionCount = entry.value;
+              final daysInMonth = _getDaysInMonth(
+                selectedMonth.year,
+                selectedMonth.month,
+              );
+              return Padding(
+                padding: AppSpacing.verticalSm,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        taskName,
+                        style: Theme.of(context).body,
                       ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (taskCompletionSummary != null && taskCompletionSummary.isNotEmpty)
-              ...taskCompletionSummary.entries.map((entry) {
-                final taskName = entry.key;
-                final completionCount = entry.value;
-                final daysInMonth = _getDaysInMonth(
-                  selectedMonth.year,
-                  selectedMonth.month,
-                );
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          taskName,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ),
-                      Text(
-                        '$completionCount / $daysInMonth days',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey.shade600,
-                            ),
-                      ),
-                    ],
-                  ),
-                );
-              })
-            else
-              Text(
-                'No tasks recorded this month',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                      fontStyle: FontStyle.italic,
                     ),
-              ),
-          ],
-        ),
+                    Text(
+                      '$completionCount / $daysInMonth days',
+                      style: Theme.of(context).caption,
+                    ),
+                  ],
+                ),
+              );
+            })
+          else
+            Text(
+              'No tasks recorded this month',
+              style: Theme.of(context).subtle,
+            ),
+        ],
       ),
     );
   }
@@ -348,46 +263,25 @@ class MonthlyScreen extends ConsumerWidget {
     BuildContext context,
     double? averageSleep,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.bedtime,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Average Sleep',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
+    return AppCard(
+      title: 'Average Sleep',
+      icon: Icons.bedtime,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (averageSleep != null)
+            Text(
+              '${averageSleep.toStringAsFixed(1)} hours',
+              style: Theme.of(context).pageTitle.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+            )
+          else
+            Text(
+              'No sleep data available',
+              style: Theme.of(context).subtle,
             ),
-            const SizedBox(height: 16),
-            if (averageSleep != null)
-              Text(
-                '${averageSleep.toStringAsFixed(1)} hours',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              )
-            else
-              Text(
-                'No sleep data available',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                      fontStyle: FontStyle.italic,
-                    ),
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -406,44 +300,27 @@ class MonthlyScreen extends ConsumerWidget {
       notesMap[note.date] = note.note;
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.note_outlined,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Daily Notes',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Generate list for all days in month
-            ...List.generate(daysInMonth, (index) {
-              final day = index + 1;
-              final date = DateTime(selectedMonth.year, selectedMonth.month, day);
-              final dateString = _formatDate(date);
-              final note = notesMap[dateString];
+    return AppCard(
+      title: 'Daily Notes',
+      icon: Icons.note_outlined,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Generate list for all days in month
+          ...List.generate(daysInMonth, (index) {
+            final day = index + 1;
+            final date = DateTime(selectedMonth.year, selectedMonth.month, day);
+            final dateString = _formatDate(date);
+            final note = notesMap[dateString];
 
-              return _buildDailyNoteRow(
-                context,
-                ref,
-                date,
-                note,
-              );
-            }),
-          ],
-        ),
+            return _buildDailyNoteRow(
+              context,
+              ref,
+              date,
+              note,
+            );
+          }),
+        ],
       ),
     );
   }
@@ -464,7 +341,10 @@ class MonthlyScreen extends ConsumerWidget {
       },
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        padding: EdgeInsets.symmetric(
+          vertical: AppSpacing.sm * 1.5,
+          horizontal: AppSpacing.sm,
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -472,21 +352,18 @@ class MonthlyScreen extends ConsumerWidget {
               width: 70,
               child: Text(
                 dateFormatted,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                style: Theme.of(context).caption.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
               ),
             ),
-            const SizedBox(width: 16),
+            AppSpacing.widthMd,
             Expanded(
               child: Text(
                 note ?? 'No entry',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: note != null
-                          ? null
-                          : Colors.grey.shade600,
-                      fontStyle: note == null ? FontStyle.italic : null,
-                    ),
+                style: note != null
+                    ? Theme.of(context).body
+                    : Theme.of(context).subtle,
               ),
             ),
             Icon(
