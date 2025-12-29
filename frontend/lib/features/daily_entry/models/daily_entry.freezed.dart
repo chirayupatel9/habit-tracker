@@ -21,13 +21,22 @@ DailyEntry _$DailyEntryFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$DailyEntry {
   String get date => throw _privateConstructorUsedError; // Format: YYYY-MM-DD
+  @JsonKey(name: 'moment_of_day')
   String? get momentOfDay => throw _privateConstructorUsedError;
   @JsonKey(name: 'sleep_hours')
   double? get sleepHours => throw _privateConstructorUsedError;
   @JsonKey(name: 'daily_note')
   String? get dailyNote => throw _privateConstructorUsedError;
   @JsonKey(name: 'task_completions')
-  Map<String, bool>? get taskCompletions => throw _privateConstructorUsedError;
+  List<TaskCompletion> get taskCompletions =>
+      throw _privateConstructorUsedError; // Response-only fields
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_id')
+  String? get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  String? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
+  String? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this DailyEntry to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,10 +56,14 @@ abstract class $DailyEntryCopyWith<$Res> {
   @useResult
   $Res call(
       {String date,
-      String? momentOfDay,
+      @JsonKey(name: 'moment_of_day') String? momentOfDay,
       @JsonKey(name: 'sleep_hours') double? sleepHours,
       @JsonKey(name: 'daily_note') String? dailyNote,
-      @JsonKey(name: 'task_completions') Map<String, bool>? taskCompletions});
+      @JsonKey(name: 'task_completions') List<TaskCompletion> taskCompletions,
+      String? id,
+      @JsonKey(name: 'user_id') String? userId,
+      @JsonKey(name: 'created_at') String? createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
 }
 
 /// @nodoc
@@ -72,7 +85,11 @@ class _$DailyEntryCopyWithImpl<$Res, $Val extends DailyEntry>
     Object? momentOfDay = freezed,
     Object? sleepHours = freezed,
     Object? dailyNote = freezed,
-    Object? taskCompletions = freezed,
+    Object? taskCompletions = null,
+    Object? id = freezed,
+    Object? userId = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
       date: null == date
@@ -91,10 +108,26 @@ class _$DailyEntryCopyWithImpl<$Res, $Val extends DailyEntry>
           ? _value.dailyNote
           : dailyNote // ignore: cast_nullable_to_non_nullable
               as String?,
-      taskCompletions: freezed == taskCompletions
+      taskCompletions: null == taskCompletions
           ? _value.taskCompletions
           : taskCompletions // ignore: cast_nullable_to_non_nullable
-              as Map<String, bool>?,
+              as List<TaskCompletion>,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -109,10 +142,14 @@ abstract class _$$DailyEntryImplCopyWith<$Res>
   @useResult
   $Res call(
       {String date,
-      String? momentOfDay,
+      @JsonKey(name: 'moment_of_day') String? momentOfDay,
       @JsonKey(name: 'sleep_hours') double? sleepHours,
       @JsonKey(name: 'daily_note') String? dailyNote,
-      @JsonKey(name: 'task_completions') Map<String, bool>? taskCompletions});
+      @JsonKey(name: 'task_completions') List<TaskCompletion> taskCompletions,
+      String? id,
+      @JsonKey(name: 'user_id') String? userId,
+      @JsonKey(name: 'created_at') String? createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
 }
 
 /// @nodoc
@@ -132,7 +169,11 @@ class __$$DailyEntryImplCopyWithImpl<$Res>
     Object? momentOfDay = freezed,
     Object? sleepHours = freezed,
     Object? dailyNote = freezed,
-    Object? taskCompletions = freezed,
+    Object? taskCompletions = null,
+    Object? id = freezed,
+    Object? userId = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_$DailyEntryImpl(
       date: null == date
@@ -151,10 +192,26 @@ class __$$DailyEntryImplCopyWithImpl<$Res>
           ? _value.dailyNote
           : dailyNote // ignore: cast_nullable_to_non_nullable
               as String?,
-      taskCompletions: freezed == taskCompletions
+      taskCompletions: null == taskCompletions
           ? _value._taskCompletions
           : taskCompletions // ignore: cast_nullable_to_non_nullable
-              as Map<String, bool>?,
+              as List<TaskCompletion>,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -164,11 +221,15 @@ class __$$DailyEntryImplCopyWithImpl<$Res>
 class _$DailyEntryImpl implements _DailyEntry {
   const _$DailyEntryImpl(
       {required this.date,
-      this.momentOfDay,
+      @JsonKey(name: 'moment_of_day') this.momentOfDay,
       @JsonKey(name: 'sleep_hours') this.sleepHours,
       @JsonKey(name: 'daily_note') this.dailyNote,
       @JsonKey(name: 'task_completions')
-      final Map<String, bool>? taskCompletions})
+      final List<TaskCompletion> taskCompletions = const [],
+      this.id,
+      @JsonKey(name: 'user_id') this.userId,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt})
       : _taskCompletions = taskCompletions;
 
   factory _$DailyEntryImpl.fromJson(Map<String, dynamic> json) =>
@@ -178,6 +239,7 @@ class _$DailyEntryImpl implements _DailyEntry {
   final String date;
 // Format: YYYY-MM-DD
   @override
+  @JsonKey(name: 'moment_of_day')
   final String? momentOfDay;
   @override
   @JsonKey(name: 'sleep_hours')
@@ -185,20 +247,31 @@ class _$DailyEntryImpl implements _DailyEntry {
   @override
   @JsonKey(name: 'daily_note')
   final String? dailyNote;
-  final Map<String, bool>? _taskCompletions;
+  final List<TaskCompletion> _taskCompletions;
   @override
   @JsonKey(name: 'task_completions')
-  Map<String, bool>? get taskCompletions {
-    final value = _taskCompletions;
-    if (value == null) return null;
-    if (_taskCompletions is EqualUnmodifiableMapView) return _taskCompletions;
+  List<TaskCompletion> get taskCompletions {
+    if (_taskCompletions is EqualUnmodifiableListView) return _taskCompletions;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
+    return EqualUnmodifiableListView(_taskCompletions);
   }
+
+// Response-only fields
+  @override
+  final String? id;
+  @override
+  @JsonKey(name: 'user_id')
+  final String? userId;
+  @override
+  @JsonKey(name: 'created_at')
+  final String? createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  final String? updatedAt;
 
   @override
   String toString() {
-    return 'DailyEntry(date: $date, momentOfDay: $momentOfDay, sleepHours: $sleepHours, dailyNote: $dailyNote, taskCompletions: $taskCompletions)';
+    return 'DailyEntry(date: $date, momentOfDay: $momentOfDay, sleepHours: $sleepHours, dailyNote: $dailyNote, taskCompletions: $taskCompletions, id: $id, userId: $userId, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -214,13 +287,28 @@ class _$DailyEntryImpl implements _DailyEntry {
             (identical(other.dailyNote, dailyNote) ||
                 other.dailyNote == dailyNote) &&
             const DeepCollectionEquality()
-                .equals(other._taskCompletions, _taskCompletions));
+                .equals(other._taskCompletions, _taskCompletions) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, date, momentOfDay, sleepHours,
-      dailyNote, const DeepCollectionEquality().hash(_taskCompletions));
+  int get hashCode => Object.hash(
+      runtimeType,
+      date,
+      momentOfDay,
+      sleepHours,
+      dailyNote,
+      const DeepCollectionEquality().hash(_taskCompletions),
+      id,
+      userId,
+      createdAt,
+      updatedAt);
 
   /// Create a copy of DailyEntry
   /// with the given fields replaced by the non-null parameter values.
@@ -241,11 +329,15 @@ class _$DailyEntryImpl implements _DailyEntry {
 abstract class _DailyEntry implements DailyEntry {
   const factory _DailyEntry(
       {required final String date,
-      final String? momentOfDay,
+      @JsonKey(name: 'moment_of_day') final String? momentOfDay,
       @JsonKey(name: 'sleep_hours') final double? sleepHours,
       @JsonKey(name: 'daily_note') final String? dailyNote,
       @JsonKey(name: 'task_completions')
-      final Map<String, bool>? taskCompletions}) = _$DailyEntryImpl;
+      final List<TaskCompletion> taskCompletions,
+      final String? id,
+      @JsonKey(name: 'user_id') final String? userId,
+      @JsonKey(name: 'created_at') final String? createdAt,
+      @JsonKey(name: 'updated_at') final String? updatedAt}) = _$DailyEntryImpl;
 
   factory _DailyEntry.fromJson(Map<String, dynamic> json) =
       _$DailyEntryImpl.fromJson;
@@ -253,6 +345,7 @@ abstract class _DailyEntry implements DailyEntry {
   @override
   String get date; // Format: YYYY-MM-DD
   @override
+  @JsonKey(name: 'moment_of_day')
   String? get momentOfDay;
   @override
   @JsonKey(name: 'sleep_hours')
@@ -262,7 +355,18 @@ abstract class _DailyEntry implements DailyEntry {
   String? get dailyNote;
   @override
   @JsonKey(name: 'task_completions')
-  Map<String, bool>? get taskCompletions;
+  List<TaskCompletion> get taskCompletions; // Response-only fields
+  @override
+  String? get id;
+  @override
+  @JsonKey(name: 'user_id')
+  String? get userId;
+  @override
+  @JsonKey(name: 'created_at')
+  String? get createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  String? get updatedAt;
 
   /// Create a copy of DailyEntry
   /// with the given fields replaced by the non-null parameter values.

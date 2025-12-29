@@ -6,7 +6,7 @@ part of 'monthly_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$monthlySummaryHash() => r'd3a5dc7d0a356742c51a6d194d64ea03c3b8f976';
+String _$monthlySummaryHash() => r'bdc4d156b317ada5e4188f5fee5e288b906ed11b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -38,7 +38,8 @@ const monthlySummaryProvider = MonthlySummaryFamily();
 /// Provider for monthly summary
 ///
 /// Copied from [monthlySummary].
-class MonthlySummaryFamily extends Family<AsyncValue<MonthlySummary>> {
+class MonthlySummaryFamily
+    extends Family<AsyncValue<List<MonthlyAggregation>>> {
   /// Provider for monthly summary
   ///
   /// Copied from [monthlySummary].
@@ -85,7 +86,8 @@ class MonthlySummaryFamily extends Family<AsyncValue<MonthlySummary>> {
 /// Provider for monthly summary
 ///
 /// Copied from [monthlySummary].
-class MonthlySummaryProvider extends AutoDisposeFutureProvider<MonthlySummary> {
+class MonthlySummaryProvider
+    extends AutoDisposeFutureProvider<List<MonthlyAggregation>> {
   /// Provider for monthly summary
   ///
   /// Copied from [monthlySummary].
@@ -127,7 +129,8 @@ class MonthlySummaryProvider extends AutoDisposeFutureProvider<MonthlySummary> {
 
   @override
   Override overrideWith(
-    FutureOr<MonthlySummary> Function(MonthlySummaryRef provider) create,
+    FutureOr<List<MonthlyAggregation>> Function(MonthlySummaryRef provider)
+        create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -145,7 +148,7 @@ class MonthlySummaryProvider extends AutoDisposeFutureProvider<MonthlySummary> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<MonthlySummary> createElement() {
+  AutoDisposeFutureProviderElement<List<MonthlyAggregation>> createElement() {
     return _MonthlySummaryProviderElement(this);
   }
 
@@ -168,7 +171,8 @@ class MonthlySummaryProvider extends AutoDisposeFutureProvider<MonthlySummary> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin MonthlySummaryRef on AutoDisposeFutureProviderRef<MonthlySummary> {
+mixin MonthlySummaryRef
+    on AutoDisposeFutureProviderRef<List<MonthlyAggregation>> {
   /// The parameter `year` of this provider.
   int get year;
 
@@ -177,7 +181,7 @@ mixin MonthlySummaryRef on AutoDisposeFutureProviderRef<MonthlySummary> {
 }
 
 class _MonthlySummaryProviderElement
-    extends AutoDisposeFutureProviderElement<MonthlySummary>
+    extends AutoDisposeFutureProviderElement<List<MonthlyAggregation>>
     with MonthlySummaryRef {
   _MonthlySummaryProviderElement(super.provider);
 

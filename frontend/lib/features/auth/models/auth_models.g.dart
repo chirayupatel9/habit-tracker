@@ -23,7 +23,6 @@ _$RegisterRequestImpl _$$RegisterRequestImplFromJson(
     _$RegisterRequestImpl(
       email: json['email'] as String,
       password: json['password'] as String,
-      fullName: json['fullName'] as String,
     );
 
 Map<String, dynamic> _$$RegisterRequestImplToJson(
@@ -31,39 +30,32 @@ Map<String, dynamic> _$$RegisterRequestImplToJson(
     <String, dynamic>{
       'email': instance.email,
       'password': instance.password,
-      'fullName': instance.fullName,
     };
 
-_$AuthResponseImpl _$$AuthResponseImplFromJson(Map<String, dynamic> json) =>
-    _$AuthResponseImpl(
+_$TokenResponseImpl _$$TokenResponseImplFromJson(Map<String, dynamic> json) =>
+    _$TokenResponseImpl(
       accessToken: json['access_token'] as String,
-      refreshToken: json['refresh_token'] as String?,
+      refreshToken: json['refresh_token'] as String,
       tokenType: json['token_type'] as String? ?? 'bearer',
-      user: json['user'] == null
-          ? null
-          : UserModel.fromJson(json['user'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$AuthResponseImplToJson(_$AuthResponseImpl instance) =>
+Map<String, dynamic> _$$TokenResponseImplToJson(_$TokenResponseImpl instance) =>
     <String, dynamic>{
       'access_token': instance.accessToken,
       'refresh_token': instance.refreshToken,
       'token_type': instance.tokenType,
-      'user': instance.user,
     };
 
-_$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
-    _$UserModelImpl(
+_$UserResponseImpl _$$UserResponseImplFromJson(Map<String, dynamic> json) =>
+    _$UserResponseImpl(
       id: json['id'] as String,
       email: json['email'] as String,
-      fullName: json['full_name'] as String,
-      createdAt: json['created_at'] as String?,
+      createdAt: json['created_at'] as String,
     );
 
-Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
+Map<String, dynamic> _$$UserResponseImplToJson(_$UserResponseImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'email': instance.email,
-      'full_name': instance.fullName,
       'created_at': instance.createdAt,
     };

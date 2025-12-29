@@ -19,7 +19,6 @@ class RegisterRequest with _$RegisterRequest {
   const factory RegisterRequest({
     required String email,
     required String password,
-    required String fullName,
   }) = _RegisterRequest;
 
   factory RegisterRequest.fromJson(Map<String, dynamic> json) =>
@@ -27,28 +26,26 @@ class RegisterRequest with _$RegisterRequest {
 }
 
 @freezed
-class AuthResponse with _$AuthResponse {
-  const factory AuthResponse({
+class TokenResponse with _$TokenResponse {
+  const factory TokenResponse({
     @JsonKey(name: 'access_token') required String accessToken,
-    @JsonKey(name: 'refresh_token') String? refreshToken,
+    @JsonKey(name: 'refresh_token') required String refreshToken,
     @JsonKey(name: 'token_type') @Default('bearer') String tokenType,
-    @JsonKey(name: 'user') UserModel? user,
-  }) = _AuthResponse;
+  }) = _TokenResponse;
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json) =>
-      _$AuthResponseFromJson(json);
+  factory TokenResponse.fromJson(Map<String, dynamic> json) =>
+      _$TokenResponseFromJson(json);
 }
 
 @freezed
-class UserModel with _$UserModel {
-  const factory UserModel({
+class UserResponse with _$UserResponse {
+  const factory UserResponse({
     required String id,
     required String email,
-    @JsonKey(name: 'full_name') required String fullName,
-    @JsonKey(name: 'created_at') String? createdAt,
-  }) = _UserModel;
+    @JsonKey(name: 'created_at') required String createdAt,
+  }) = _UserResponse;
 
-  factory UserModel.fromJson(Map<String, dynamic> json) =>
-      _$UserModelFromJson(json);
+  factory UserResponse.fromJson(Map<String, dynamic> json) =>
+      _$UserResponseFromJson(json);
 }
 

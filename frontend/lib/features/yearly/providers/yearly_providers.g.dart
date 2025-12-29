@@ -6,7 +6,7 @@ part of 'yearly_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$yearlyTrackingHash() => r'44617750684c8ee72d117b53a176ad5711289458';
+String _$yearlyTrackingHash() => r'744a47c33706c6f423abc3d3c8f34cd4f11bc620';
 
 /// Copied from Dart SDK
 class _SystemHash {

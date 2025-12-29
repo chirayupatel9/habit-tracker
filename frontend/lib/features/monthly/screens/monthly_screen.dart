@@ -64,9 +64,15 @@ class MonthlyScreen extends ConsumerWidget {
   Widget _buildContent(
     BuildContext context,
     WidgetRef ref,
-    MonthlySummary summary,
+    List<MonthlyAggregation> aggregations,
     DateTime selectedMonth,
   ) {
+    // Calculate aggregations from the list
+    final randomMoment = _getRandomMoment(aggregations);
+    final taskCompletionSummary = _getTaskCompletionSummary(aggregations);
+    final averageSleep = _getAverageSleep(aggregations);
+    final dailyNotes = _getDailyNotes(aggregations);
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -78,33 +84,78 @@ class MonthlyScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // Random Moment Section
-            _buildRandomMomentSection(context, summary.randomMoment),
+            _buildRandomMomentSection(context, randomMoment),
             const SizedBox(height: 24),
 
             // Task Summary Section
             _buildTaskSummarySection(
               context,
               ref,
-              summary.taskCompletionSummary,
+              taskCompletionSummary,
               selectedMonth,
             ),
             const SizedBox(height: 24),
 
             // Average Sleep Section
-            _buildAverageSleepSection(context, summary.averageSleep),
+            _buildAverageSleepSection(context, averageSleep),
             const SizedBox(height: 24),
 
             // Daily Notes List
             _buildDailyNotesSection(
               context,
               ref,
-              summary.dailyNotes,
+              dailyNotes,
               selectedMonth,
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Helper methods to extract data from aggregations
+  ({String date, String moment})? _getRandomMoment(
+    List<MonthlyAggregation> aggregations,
+  ) {
+    final withMoments = aggregations
+        .where((a) => a.momentOfDay != null && a.momentOfDay!.isNotEmpty)
+        .toList();
+    if (withMoments.isEmpty) return null;
+    final random = withMoments[(DateTime.now().millisecondsSinceEpoch %
+            withMoments.length)];
+    return (date: random.date, moment: random.momentOfDay!);
+  }
+
+  Map<String, int> _getTaskCompletionSummary(
+    List<MonthlyAggregation> aggregations,
+  ) {
+    final summary = <String, int>{};
+    for (final agg in aggregations) {
+      if (agg.taskCompletionCounts != null) {
+        for (final entry in agg.taskCompletionCounts!.entries) {
+          summary[entry.key] = (summary[entry.key] ?? 0) + entry.value;
+        }
+      }
+    }
+    return summary;
+  }
+
+  double? _getAverageSleep(List<MonthlyAggregation> aggregations) {
+    final sleepValues = aggregations
+        .where((a) => a.sleepHours != null)
+        .map((a) => a.sleepHours!)
+        .toList();
+    if (sleepValues.isEmpty) return null;
+    return sleepValues.reduce((a, b) => a + b) / sleepValues.length;
+  }
+
+  List<({String date, String? note})> _getDailyNotes(
+    List<MonthlyAggregation> aggregations,
+  ) {
+    return aggregations
+        .where((a) => a.dailyNote != null && a.dailyNote!.isNotEmpty)
+        .map((a) => (date: a.date, note: a.dailyNote))
+        .toList();
   }
 
   Widget _buildMonthHeader(
@@ -169,7 +220,7 @@ class MonthlyScreen extends ConsumerWidget {
 
   Widget _buildRandomMomentSection(
     BuildContext context,
-    RandomMoment? randomMoment,
+    ({String date, String moment})? randomMoment,
   ) {
     return Card(
       child: Padding(
@@ -342,17 +393,15 @@ class MonthlyScreen extends ConsumerWidget {
   Widget _buildDailyNotesSection(
     BuildContext context,
     WidgetRef ref,
-    List<DailyNoteEntry>? dailyNotes,
+    List<({String date, String? note})> dailyNotes,
     DateTime selectedMonth,
   ) {
     final daysInMonth = _getDaysInMonth(selectedMonth.year, selectedMonth.month);
     final notesMap = <String, String?>{};
 
     // Create a map of date -> note for quick lookup
-    if (dailyNotes != null) {
-      for (final note in dailyNotes) {
-        notesMap[note.date] = note.note;
-      }
+    for (final note in dailyNotes) {
+      notesMap[note.date] = note.note;
     }
 
     return Card(

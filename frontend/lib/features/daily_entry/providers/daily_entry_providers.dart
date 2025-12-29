@@ -28,7 +28,7 @@ Future<DailyEntry?> dailyEntry(
 ) async {
   final service = ref.watch(dailyEntryServiceProvider);
   final dateString = _formatDate(date);
-  return await service.getEntry(dateString);
+  return await service.getEntryByDate(dateString);
 }
 
 /// Provider for saving daily entry

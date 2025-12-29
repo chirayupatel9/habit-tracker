@@ -6,6 +6,11 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/dashboard/screens/dashboard_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
+import '../../features/daily_entry/screens/daily_entry_screen.dart';
+import '../../features/monthly/screens/monthly_screen.dart';
+import '../../features/yearly/screens/yearly_calendar_screen.dart';
+import '../../features/tasks/screens/task_management_screen.dart';
+import '../../features/feedback/screens/feedback_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -61,6 +66,31 @@ GoRouter appRouter(AppRouterRef ref) {
         path: '/dashboard',
         name: 'dashboard',
         builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: '/daily-entry',
+        name: 'daily-entry',
+        builder: (context, state) => const DailyEntryScreen(),
+      ),
+      GoRoute(
+        path: '/monthly',
+        name: 'monthly',
+        builder: (context, state) => const MonthlyScreen(),
+      ),
+      GoRoute(
+        path: '/yearly',
+        name: 'yearly',
+        builder: (context, state) => const YearlyCalendarScreen(),
+      ),
+      GoRoute(
+        path: '/tasks',
+        name: 'tasks',
+        builder: (context, state) => const TaskManagementScreen(),
+      ),
+      GoRoute(
+        path: '/feedback',
+        name: 'feedback',
+        builder: (context, state) => const FeedbackScreen(),
       ),
     ],
   );

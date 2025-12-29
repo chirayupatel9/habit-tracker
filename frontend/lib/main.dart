@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart';
 import 'app.dart';
 import 'services/notification_scheduler_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';

@@ -3,7 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../models/daily_entry.dart';
+import '../models/task_completion.dart';
 import '../providers/daily_entry_providers.dart';
+import '../../tasks/providers/task_providers.dart';
+import '../../tasks/models/task.dart';
 
 class DailyEntryScreen extends ConsumerStatefulWidget {
   const DailyEntryScreen({super.key});
@@ -17,25 +20,28 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
   final _momentController = TextEditingController();
   final _sleepHoursController = TextEditingController();
   final _noteController = TextEditingController();
-  final _taskControllers = <String, bool>{};
-  final _taskNameController = TextEditingController();
+  // Map of task_id -> completed
+  final _taskCompletions = <String, bool>{};
 
   @override
   void dispose() {
     _momentController.dispose();
     _sleepHoursController.dispose();
     _noteController.dispose();
-    _taskNameController.dispose();
     super.dispose();
   }
 
-  void _loadEntryData(DailyEntry? entry) {
+  void _loadEntryData(DailyEntry? entry, List<Task> tasks) {
     if (entry == null) {
       // Clear all fields if no entry exists
       _momentController.clear();
       _sleepHoursController.clear();
       _noteController.clear();
-      _taskControllers.clear();
+      _taskCompletions.clear();
+      // Initialize with all active tasks as unchecked
+      for (final task in tasks.where((t) => t.isActive)) {
+        _taskCompletions[task.id] = false;
+      }
       return;
     }
 
@@ -43,9 +49,16 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
     _momentController.text = entry.momentOfDay ?? '';
     _sleepHoursController.text = entry.sleepHours?.toString() ?? '';
     _noteController.text = entry.dailyNote ?? '';
-    _taskControllers.clear();
-    if (entry.taskCompletions != null) {
-      _taskControllers.addAll(entry.taskCompletions!);
+    
+    // Load task completions
+    _taskCompletions.clear();
+    // First, add all active tasks as unchecked
+    for (final task in tasks.where((t) => t.isActive)) {
+      _taskCompletions[task.id] = false;
+    }
+    // Then, update with actual completions from entry
+    for (final completion in entry.taskCompletions) {
+      _taskCompletions[completion.taskId] = completion.completed;
     }
   }
 
@@ -56,6 +69,14 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
 
     final selectedDate = ref.read(selectedDateProvider);
     final dateString = _formatDate(selectedDate);
+
+    // Convert task completions map to TaskCompletion list
+    final taskCompletions = _taskCompletions.entries
+        .map((entry) => TaskCompletion(
+              taskId: entry.key,
+              completed: entry.value,
+            ))
+        .toList();
 
     final entry = DailyEntry(
       date: dateString,
@@ -68,7 +89,7 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
       dailyNote: _noteController.text.trim().isEmpty
           ? null
           : _noteController.text.trim(),
-      taskCompletions: _taskControllers.isEmpty ? null : _taskControllers,
+      taskCompletions: taskCompletions,
     );
 
     try {
@@ -110,27 +131,6 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
     }
   }
 
-  void _addTask() {
-    final taskName = _taskNameController.text.trim();
-    if (taskName.isEmpty) return;
-
-    setState(() {
-      _taskControllers[taskName] = false;
-      _taskNameController.clear();
-    });
-  }
-
-  void _removeTask(String taskName) {
-    setState(() {
-      _taskControllers.remove(taskName);
-    });
-  }
-
-  void _toggleTask(String taskName, bool? value) {
-    setState(() {
-      _taskControllers[taskName] = value ?? false;
-    });
-  }
 
   String _formatDate(DateTime date) {
     return DateFormat('yyyy-MM-dd').format(date);
@@ -155,11 +155,14 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
     final selectedDate = ref.watch(selectedDateProvider);
     final entryAsync = ref.watch(dailyEntryProvider(selectedDate));
     final saveState = ref.watch(saveDailyEntryProvider);
+    final tasksAsync = ref.watch(tasksProvider);
 
     // Load entry data when it changes
-    entryAsync.whenData((entry) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _loadEntryData(entry);
+    tasksAsync.whenData((tasks) {
+      entryAsync.whenData((entry) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _loadEntryData(entry, tasks);
+        });
       });
     });
 
@@ -196,7 +199,11 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
                   const SizedBox(height: 16),
 
                   // Tasks Section
-                  _buildTasksSection(),
+                  tasksAsync.when(
+                    loading: () => const CircularProgressIndicator(),
+                    error: (_, __) => const Text('Error loading tasks'),
+                    data: (tasks) => _buildTasksSection(tasks),
+                  ),
                   const SizedBox(height: 16),
 
                   // Sleep Hours
@@ -337,53 +344,45 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
     );
   }
 
-  Widget _buildTasksSection() {
+  Widget _buildTasksSection(List<Task> tasks) {
+    final activeTasks = tasks.where((t) => t.isActive).toList();
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _taskNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Add Task',
-                  hintText: 'Enter task name',
-                  prefixIcon: Icon(Icons.add_task_outlined),
-                ),
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) => _addTask(),
+        Text(
+          'Tasks',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: _addTask,
-              icon: const Icon(Icons.add_circle),
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ],
         ),
-        if (_taskControllers.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          ..._taskControllers.keys.map((taskName) {
+        const SizedBox(height: 12),
+        if (activeTasks.isEmpty)
+          Text(
+            'No active tasks. Add tasks in the Tasks screen.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey.shade600,
+                  fontStyle: FontStyle.italic,
+                ),
+          )
+        else
+          ...activeTasks.map((task) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Card(
                 child: CheckboxListTile(
-                  title: Text(taskName),
-                  value: _taskControllers[taskName] ?? false,
-                  onChanged: (value) => _toggleTask(taskName, value),
-                  secondary: IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () => _removeTask(taskName),
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  title: Text(task.name),
+                  value: _taskCompletions[task.id] ?? false,
+                  onChanged: (value) {
+                    setState(() {
+                      _taskCompletions[task.id] = value ?? false;
+                    });
+                  },
                   controlAffinity: ListTileControlAffinity.leading,
                 ),
               ),
             );
           }),
-        ],
       ],
     );
   }

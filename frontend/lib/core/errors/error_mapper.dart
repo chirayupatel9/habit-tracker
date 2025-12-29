@@ -16,7 +16,6 @@ class ErrorMapper {
       case ApiErrorType.server:
         return AppError.server(message: exception.message);
       case ApiErrorType.unknown:
-      default:
         return AppError.unknown(message: exception.message);
     }
   }

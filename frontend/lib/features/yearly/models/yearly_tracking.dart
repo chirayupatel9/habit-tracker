@@ -4,13 +4,16 @@ part 'yearly_tracking.freezed.dart';
 part 'yearly_tracking.g.dart';
 
 @freezed
-class YearlyTracking with _$YearlyTracking {
-  const factory YearlyTracking({
-    required int year,
-    @JsonKey(name: 'tracked_dates') required List<String> trackedDates,
-  }) = _YearlyTracking;
+class YearlyTrackingItem with _$YearlyTrackingItem {
+  const factory YearlyTrackingItem({
+    required String date, // Format: YYYY-MM-DD
+    required bool tracked,
+  }) = _YearlyTrackingItem;
 
-  factory YearlyTracking.fromJson(Map<String, dynamic> json) =>
-      _$YearlyTrackingFromJson(json);
+  factory YearlyTrackingItem.fromJson(Map<String, dynamic> json) =>
+      _$YearlyTrackingItemFromJson(json);
 }
+
+// Keep YearlyTracking for backward compatibility
+typedef YearlyTracking = List<YearlyTrackingItem>;
 

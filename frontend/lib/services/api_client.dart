@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../core/constants/app_constants.dart';
-import '../core/errors/app_error.dart';
-import '../core/errors/error_mapper.dart';
 import 'secure_storage.dart';
 
 part 'api_client.g.dart';
@@ -184,6 +182,39 @@ class ApiClient {
     }
   }
 
+  Future<Map<String, dynamic>> patch(
+    String endpoint,
+    Map<String, dynamic> body, {
+    bool requireAuth = true,
+  }) async {
+    try {
+      final uri = Uri.parse('$_baseUrl$endpoint');
+      final headers = await _getHeaders(includeAuth: requireAuth);
+      final jsonBody = jsonEncode(body);
+      
+      final response = await http
+          .patch(
+            uri,
+            headers: headers,
+            body: jsonBody,
+          )
+          .timeout(AppConstants.connectionTimeout);
+
+      return _handleResponse(response);
+    } on http.ClientException {
+      throw ApiException(
+        message: 'Network error. Please check your connection.',
+        type: ApiErrorType.network,
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(
+        message: 'An unexpected error occurred',
+        type: ApiErrorType.unknown,
+      );
+    }
+  }
+
   Future<Map<String, dynamic>> delete(
     String endpoint, {
     bool requireAuth = true,
@@ -221,7 +252,12 @@ class ApiClient {
       if (response.body.isEmpty) {
         return {};
       }
-      return jsonDecode(response.body) as Map<String, dynamic>;
+      final decoded = jsonDecode(response.body);
+      // Handle array responses (e.g., GET /tasks returns array)
+      if (decoded is List) {
+        return {'_items': decoded};
+      }
+      return decoded as Map<String, dynamic>;
     }
 
     String errorMessage = 'An error occurred';

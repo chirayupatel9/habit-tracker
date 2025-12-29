@@ -20,7 +20,7 @@ class DashboardService {
   Future<DashboardSummary> getDashboardSummary() async {
     try {
       final response = await _apiClient.get(
-        '/dashboard/summary',
+        '/entries/dashboard/summary',
         requireAuth: true,
       );
       return DashboardSummary.fromJson(response);
@@ -28,12 +28,10 @@ class DashboardService {
       if (e.type == ApiErrorType.notFound) {
         // Endpoint doesn't exist yet - return empty summary
         return const DashboardSummary(
-          randomMoment: null,
-          randomMomentDate: null,
+          randomPastMoment: null,
           averageSleep7Days: null,
           averageSleep30Days: null,
-          sleepTrend: null,
-          taskConsistencyPercentage: null,
+          taskConsistencyPercentage: 0,
         );
       }
       rethrow;

@@ -14,186 +14,171 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-YearlyTracking _$YearlyTrackingFromJson(Map<String, dynamic> json) {
-  return _YearlyTracking.fromJson(json);
+YearlyTrackingItem _$YearlyTrackingItemFromJson(Map<String, dynamic> json) {
+  return _YearlyTrackingItem.fromJson(json);
 }
 
 /// @nodoc
-mixin _$YearlyTracking {
-  int get year => throw _privateConstructorUsedError;
-  @JsonKey(name: 'tracked_dates')
-  List<String> get trackedDates => throw _privateConstructorUsedError;
+mixin _$YearlyTrackingItem {
+  String get date => throw _privateConstructorUsedError; // Format: YYYY-MM-DD
+  bool get tracked => throw _privateConstructorUsedError;
 
-  /// Serializes this YearlyTracking to a JSON map.
+  /// Serializes this YearlyTrackingItem to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of YearlyTracking
+  /// Create a copy of YearlyTrackingItem
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $YearlyTrackingCopyWith<YearlyTracking> get copyWith =>
+  $YearlyTrackingItemCopyWith<YearlyTrackingItem> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $YearlyTrackingCopyWith<$Res> {
-  factory $YearlyTrackingCopyWith(
-          YearlyTracking value, $Res Function(YearlyTracking) then) =
-      _$YearlyTrackingCopyWithImpl<$Res, YearlyTracking>;
+abstract class $YearlyTrackingItemCopyWith<$Res> {
+  factory $YearlyTrackingItemCopyWith(
+          YearlyTrackingItem value, $Res Function(YearlyTrackingItem) then) =
+      _$YearlyTrackingItemCopyWithImpl<$Res, YearlyTrackingItem>;
   @useResult
-  $Res call(
-      {int year, @JsonKey(name: 'tracked_dates') List<String> trackedDates});
+  $Res call({String date, bool tracked});
 }
 
 /// @nodoc
-class _$YearlyTrackingCopyWithImpl<$Res, $Val extends YearlyTracking>
-    implements $YearlyTrackingCopyWith<$Res> {
-  _$YearlyTrackingCopyWithImpl(this._value, this._then);
+class _$YearlyTrackingItemCopyWithImpl<$Res, $Val extends YearlyTrackingItem>
+    implements $YearlyTrackingItemCopyWith<$Res> {
+  _$YearlyTrackingItemCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of YearlyTracking
+  /// Create a copy of YearlyTrackingItem
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? year = null,
-    Object? trackedDates = null,
+    Object? date = null,
+    Object? tracked = null,
   }) {
     return _then(_value.copyWith(
-      year: null == year
-          ? _value.year
-          : year // ignore: cast_nullable_to_non_nullable
-              as int,
-      trackedDates: null == trackedDates
-          ? _value.trackedDates
-          : trackedDates // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      date: null == date
+          ? _value.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as String,
+      tracked: null == tracked
+          ? _value.tracked
+          : tracked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$YearlyTrackingImplCopyWith<$Res>
-    implements $YearlyTrackingCopyWith<$Res> {
-  factory _$$YearlyTrackingImplCopyWith(_$YearlyTrackingImpl value,
-          $Res Function(_$YearlyTrackingImpl) then) =
-      __$$YearlyTrackingImplCopyWithImpl<$Res>;
+abstract class _$$YearlyTrackingItemImplCopyWith<$Res>
+    implements $YearlyTrackingItemCopyWith<$Res> {
+  factory _$$YearlyTrackingItemImplCopyWith(_$YearlyTrackingItemImpl value,
+          $Res Function(_$YearlyTrackingItemImpl) then) =
+      __$$YearlyTrackingItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int year, @JsonKey(name: 'tracked_dates') List<String> trackedDates});
+  $Res call({String date, bool tracked});
 }
 
 /// @nodoc
-class __$$YearlyTrackingImplCopyWithImpl<$Res>
-    extends _$YearlyTrackingCopyWithImpl<$Res, _$YearlyTrackingImpl>
-    implements _$$YearlyTrackingImplCopyWith<$Res> {
-  __$$YearlyTrackingImplCopyWithImpl(
-      _$YearlyTrackingImpl _value, $Res Function(_$YearlyTrackingImpl) _then)
+class __$$YearlyTrackingItemImplCopyWithImpl<$Res>
+    extends _$YearlyTrackingItemCopyWithImpl<$Res, _$YearlyTrackingItemImpl>
+    implements _$$YearlyTrackingItemImplCopyWith<$Res> {
+  __$$YearlyTrackingItemImplCopyWithImpl(_$YearlyTrackingItemImpl _value,
+      $Res Function(_$YearlyTrackingItemImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of YearlyTracking
+  /// Create a copy of YearlyTrackingItem
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? year = null,
-    Object? trackedDates = null,
+    Object? date = null,
+    Object? tracked = null,
   }) {
-    return _then(_$YearlyTrackingImpl(
-      year: null == year
-          ? _value.year
-          : year // ignore: cast_nullable_to_non_nullable
-              as int,
-      trackedDates: null == trackedDates
-          ? _value._trackedDates
-          : trackedDates // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+    return _then(_$YearlyTrackingItemImpl(
+      date: null == date
+          ? _value.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as String,
+      tracked: null == tracked
+          ? _value.tracked
+          : tracked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$YearlyTrackingImpl implements _YearlyTracking {
-  const _$YearlyTrackingImpl(
-      {required this.year,
-      @JsonKey(name: 'tracked_dates') required final List<String> trackedDates})
-      : _trackedDates = trackedDates;
+class _$YearlyTrackingItemImpl implements _YearlyTrackingItem {
+  const _$YearlyTrackingItemImpl({required this.date, required this.tracked});
 
-  factory _$YearlyTrackingImpl.fromJson(Map<String, dynamic> json) =>
-      _$$YearlyTrackingImplFromJson(json);
+  factory _$YearlyTrackingItemImpl.fromJson(Map<String, dynamic> json) =>
+      _$$YearlyTrackingItemImplFromJson(json);
 
   @override
-  final int year;
-  final List<String> _trackedDates;
+  final String date;
+// Format: YYYY-MM-DD
   @override
-  @JsonKey(name: 'tracked_dates')
-  List<String> get trackedDates {
-    if (_trackedDates is EqualUnmodifiableListView) return _trackedDates;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_trackedDates);
-  }
+  final bool tracked;
 
   @override
   String toString() {
-    return 'YearlyTracking(year: $year, trackedDates: $trackedDates)';
+    return 'YearlyTrackingItem(date: $date, tracked: $tracked)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$YearlyTrackingImpl &&
-            (identical(other.year, year) || other.year == year) &&
-            const DeepCollectionEquality()
-                .equals(other._trackedDates, _trackedDates));
+            other is _$YearlyTrackingItemImpl &&
+            (identical(other.date, date) || other.date == date) &&
+            (identical(other.tracked, tracked) || other.tracked == tracked));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, year, const DeepCollectionEquality().hash(_trackedDates));
+  int get hashCode => Object.hash(runtimeType, date, tracked);
 
-  /// Create a copy of YearlyTracking
+  /// Create a copy of YearlyTrackingItem
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$YearlyTrackingImplCopyWith<_$YearlyTrackingImpl> get copyWith =>
-      __$$YearlyTrackingImplCopyWithImpl<_$YearlyTrackingImpl>(
+  _$$YearlyTrackingItemImplCopyWith<_$YearlyTrackingItemImpl> get copyWith =>
+      __$$YearlyTrackingItemImplCopyWithImpl<_$YearlyTrackingItemImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$YearlyTrackingImplToJson(
+    return _$$YearlyTrackingItemImplToJson(
       this,
     );
   }
 }
 
-abstract class _YearlyTracking implements YearlyTracking {
-  const factory _YearlyTracking(
-      {required final int year,
-      @JsonKey(name: 'tracked_dates')
-      required final List<String> trackedDates}) = _$YearlyTrackingImpl;
+abstract class _YearlyTrackingItem implements YearlyTrackingItem {
+  const factory _YearlyTrackingItem(
+      {required final String date,
+      required final bool tracked}) = _$YearlyTrackingItemImpl;
 
-  factory _YearlyTracking.fromJson(Map<String, dynamic> json) =
-      _$YearlyTrackingImpl.fromJson;
+  factory _YearlyTrackingItem.fromJson(Map<String, dynamic> json) =
+      _$YearlyTrackingItemImpl.fromJson;
 
   @override
-  int get year;
+  String get date; // Format: YYYY-MM-DD
   @override
-  @JsonKey(name: 'tracked_dates')
-  List<String> get trackedDates;
+  bool get tracked;
 
-  /// Create a copy of YearlyTracking
+  /// Create a copy of YearlyTrackingItem
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$YearlyTrackingImplCopyWith<_$YearlyTrackingImpl> get copyWith =>
+  _$$YearlyTrackingItemImplCopyWith<_$YearlyTrackingItemImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

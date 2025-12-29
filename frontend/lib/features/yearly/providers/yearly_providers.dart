@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../models/yearly_tracking.dart';
 import '../services/yearly_service.dart';
 
 part 'yearly_providers.g.dart';
@@ -36,39 +35,25 @@ Future<Map<DateTime, bool>> yearlyTracking(
   int year,
 ) async {
   final service = ref.watch(yearlyServiceProvider);
-  final tracking = await service.getYearlyTracking(year);
+  final trackingItems = await service.getYearlyTracking(year);
   
-  // Convert tracked dates (strings) to DateTime set for quick lookup
-  final trackedSet = <DateTime>{};
-  for (final dateStr in tracking.trackedDates) {
-    try {
-      final date = DateTime.parse(dateStr);
-      trackedSet.add(DateTime(date.year, date.month, date.day));
-    } catch (_) {
-      // Skip invalid dates
-    }
-  }
-  
-  // Create a map for all days in the year
+  // Convert list of tracking items to DateTime map
   final yearMap = <DateTime, bool>{};
-  final startOfYear = DateTime(year, 1, 1);
-  final endOfYear = DateTime(year, 12, 31);
   final today = DateTime.now();
   final todayDate = DateTime(today.year, today.month, today.day);
   
-  var currentDate = startOfYear;
-  while (currentDate.isBefore(endOfYear) || currentDate.isAtSameMomentAs(endOfYear)) {
-    final dateOnly = DateTime(currentDate.year, currentDate.month, currentDate.day);
-    
-    // Future dates are not tracked or missed
-    if (dateOnly.isAfter(todayDate)) {
-      // Don't add future dates to the map
-    } else {
-      // Past or present dates: true if tracked, false if missed
-      yearMap[dateOnly] = trackedSet.contains(dateOnly);
+  for (final item in trackingItems) {
+    try {
+      final date = DateTime.parse(item.date);
+      final dateOnly = DateTime(date.year, date.month, date.day);
+      
+      // Only include past or present dates
+      if (!dateOnly.isAfter(todayDate)) {
+        yearMap[dateOnly] = item.tracked;
+      }
+    } catch (_) {
+      // Skip invalid dates
     }
-    
-    currentDate = currentDate.add(const Duration(days: 1));
   }
   
   return yearMap;

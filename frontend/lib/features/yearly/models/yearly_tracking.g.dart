@@ -6,17 +6,16 @@ part of 'yearly_tracking.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$YearlyTrackingImpl _$$YearlyTrackingImplFromJson(Map<String, dynamic> json) =>
-    _$YearlyTrackingImpl(
-      year: (json['year'] as num).toInt(),
-      trackedDates: (json['tracked_dates'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+_$YearlyTrackingItemImpl _$$YearlyTrackingItemImplFromJson(
+        Map<String, dynamic> json) =>
+    _$YearlyTrackingItemImpl(
+      date: json['date'] as String,
+      tracked: json['tracked'] as bool,
     );
 
-Map<String, dynamic> _$$YearlyTrackingImplToJson(
-        _$YearlyTrackingImpl instance) =>
+Map<String, dynamic> _$$YearlyTrackingItemImplToJson(
+        _$YearlyTrackingItemImpl instance) =>
     <String, dynamic>{
-      'year': instance.year,
-      'tracked_dates': instance.trackedDates,
+      'date': instance.date,
+      'tracked': instance.tracked,
     };

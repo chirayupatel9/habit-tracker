@@ -16,13 +16,25 @@ class MonthlyService {
 
   MonthlyService(this._apiClient);
 
-  /// Get monthly summary for a specific year and month
-  Future<MonthlySummary> getMonthlySummary(int year, int month) async {
+  /// Get monthly aggregation for a specific year and month
+  Future<List<MonthlyAggregation>> getMonthlySummary(int year, int month) async {
     final response = await _apiClient.get(
-      '/entries/month?year=$year&month=$month',
+      '/entries/monthly/$year/$month',
       requireAuth: true,
     );
-    return MonthlySummary.fromJson(response);
+    
+    List<dynamic> itemsList;
+    if (response['_items'] != null) {
+      itemsList = response['_items'] as List;
+    } else if (response is List) {
+      itemsList = response as List;
+    } else {
+      return [];
+    }
+    
+    return itemsList
+        .map((json) => MonthlyAggregation.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }
 

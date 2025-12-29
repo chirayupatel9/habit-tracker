@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'task_completion.dart';
 
 part 'daily_entry.freezed.dart';
 part 'daily_entry.g.dart';
@@ -7,11 +8,16 @@ part 'daily_entry.g.dart';
 class DailyEntry with _$DailyEntry {
   const factory DailyEntry({
     required String date, // Format: YYYY-MM-DD
-    String? momentOfDay,
+    @JsonKey(name: 'moment_of_day') String? momentOfDay,
     @JsonKey(name: 'sleep_hours') double? sleepHours,
     @JsonKey(name: 'daily_note') String? dailyNote,
     @JsonKey(name: 'task_completions')
-        Map<String, bool>? taskCompletions,
+        @Default([]) List<TaskCompletion> taskCompletions,
+    // Response-only fields
+    String? id,
+    @JsonKey(name: 'user_id') String? userId,
+    @JsonKey(name: 'created_at') String? createdAt,
+    @JsonKey(name: 'updated_at') String? updatedAt,
   }) = _DailyEntry;
 
   factory DailyEntry.fromJson(Map<String, dynamic> json) =>

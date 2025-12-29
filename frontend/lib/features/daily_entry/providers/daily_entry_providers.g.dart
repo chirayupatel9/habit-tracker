@@ -6,7 +6,7 @@ part of 'daily_entry_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dailyEntryHash() => r'fb33d1e0bbe3af4200d444e72d845961e50da625';
+String _$dailyEntryHash() => r'570c54d7cc34eb6a6c55248a6736423b07e84dea';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -31,7 +31,7 @@ class SelectedMonth extends _$SelectedMonth {
 
 /// Provider for monthly summary
 @riverpod
-Future<MonthlySummary> monthlySummary(
+Future<List<MonthlyAggregation>> monthlySummary(
   MonthlySummaryRef ref,
   int year,
   int month,

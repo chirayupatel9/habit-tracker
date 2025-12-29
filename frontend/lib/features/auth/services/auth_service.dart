@@ -16,39 +16,22 @@ class AuthService {
 
   AuthService(this._apiClient);
 
-  Future<AuthResponse> login(LoginRequest request) async {
-    // Use the model's toJson to ensure correct format
-    final requestBody = request.toJson();
-    
-    // Debug: Print what we're sending (remove in production)
-    print('Login request body: $requestBody');
-    
+  Future<TokenResponse> login(LoginRequest request) async {
     final response = await _apiClient.post(
       '/auth/login',
-      requestBody,
+      request.toJson(),
       requireAuth: false,
     );
-    
-    // Debug: Print response before parsing
-    print('Login response: $response');
-    
-    try {
-      return AuthResponse.fromJson(response);
-    } catch (e) {
-      print('Error parsing AuthResponse: $e');
-      print('Response data: $response');
-      rethrow;
-    }
+    return TokenResponse.fromJson(response);
   }
 
-  Future<AuthResponse> register(RegisterRequest request) async {
-    // Registration might use JSON, but check your backend
+  Future<UserResponse> register(RegisterRequest request) async {
     final response = await _apiClient.post(
       '/auth/register',
       request.toJson(),
       requireAuth: false,
     );
-    return AuthResponse.fromJson(response);
+    return UserResponse.fromJson(response);
   }
 
   Future<void> logout() async {

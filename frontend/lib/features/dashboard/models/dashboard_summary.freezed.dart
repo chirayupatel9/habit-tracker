@@ -20,19 +20,14 @@ DashboardSummary _$DashboardSummaryFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$DashboardSummary {
-  @JsonKey(name: 'random_moment')
-  String? get randomMoment => throw _privateConstructorUsedError;
-  @JsonKey(name: 'random_moment_date')
-  String? get randomMomentDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'random_past_moment')
+  String? get randomPastMoment => throw _privateConstructorUsedError;
   @JsonKey(name: 'average_sleep_7_days')
   double? get averageSleep7Days => throw _privateConstructorUsedError;
   @JsonKey(name: 'average_sleep_30_days')
   double? get averageSleep30Days => throw _privateConstructorUsedError;
-  @JsonKey(name: 'sleep_trend')
-  String? get sleepTrend =>
-      throw _privateConstructorUsedError; // 'up', 'down', 'stable'
   @JsonKey(name: 'task_consistency_percentage')
-  double? get taskConsistencyPercentage => throw _privateConstructorUsedError;
+  double get taskConsistencyPercentage => throw _privateConstructorUsedError;
 
   /// Serializes this DashboardSummary to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,13 +46,11 @@ abstract class $DashboardSummaryCopyWith<$Res> {
       _$DashboardSummaryCopyWithImpl<$Res, DashboardSummary>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'random_moment') String? randomMoment,
-      @JsonKey(name: 'random_moment_date') String? randomMomentDate,
+      {@JsonKey(name: 'random_past_moment') String? randomPastMoment,
       @JsonKey(name: 'average_sleep_7_days') double? averageSleep7Days,
       @JsonKey(name: 'average_sleep_30_days') double? averageSleep30Days,
-      @JsonKey(name: 'sleep_trend') String? sleepTrend,
       @JsonKey(name: 'task_consistency_percentage')
-      double? taskConsistencyPercentage});
+      double taskConsistencyPercentage});
 }
 
 /// @nodoc
@@ -75,21 +68,15 @@ class _$DashboardSummaryCopyWithImpl<$Res, $Val extends DashboardSummary>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? randomMoment = freezed,
-    Object? randomMomentDate = freezed,
+    Object? randomPastMoment = freezed,
     Object? averageSleep7Days = freezed,
     Object? averageSleep30Days = freezed,
-    Object? sleepTrend = freezed,
-    Object? taskConsistencyPercentage = freezed,
+    Object? taskConsistencyPercentage = null,
   }) {
     return _then(_value.copyWith(
-      randomMoment: freezed == randomMoment
-          ? _value.randomMoment
-          : randomMoment // ignore: cast_nullable_to_non_nullable
-              as String?,
-      randomMomentDate: freezed == randomMomentDate
-          ? _value.randomMomentDate
-          : randomMomentDate // ignore: cast_nullable_to_non_nullable
+      randomPastMoment: freezed == randomPastMoment
+          ? _value.randomPastMoment
+          : randomPastMoment // ignore: cast_nullable_to_non_nullable
               as String?,
       averageSleep7Days: freezed == averageSleep7Days
           ? _value.averageSleep7Days
@@ -99,14 +86,10 @@ class _$DashboardSummaryCopyWithImpl<$Res, $Val extends DashboardSummary>
           ? _value.averageSleep30Days
           : averageSleep30Days // ignore: cast_nullable_to_non_nullable
               as double?,
-      sleepTrend: freezed == sleepTrend
-          ? _value.sleepTrend
-          : sleepTrend // ignore: cast_nullable_to_non_nullable
-              as String?,
-      taskConsistencyPercentage: freezed == taskConsistencyPercentage
+      taskConsistencyPercentage: null == taskConsistencyPercentage
           ? _value.taskConsistencyPercentage
           : taskConsistencyPercentage // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
     ) as $Val);
   }
 }
@@ -120,13 +103,11 @@ abstract class _$$DashboardSummaryImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'random_moment') String? randomMoment,
-      @JsonKey(name: 'random_moment_date') String? randomMomentDate,
+      {@JsonKey(name: 'random_past_moment') String? randomPastMoment,
       @JsonKey(name: 'average_sleep_7_days') double? averageSleep7Days,
       @JsonKey(name: 'average_sleep_30_days') double? averageSleep30Days,
-      @JsonKey(name: 'sleep_trend') String? sleepTrend,
       @JsonKey(name: 'task_consistency_percentage')
-      double? taskConsistencyPercentage});
+      double taskConsistencyPercentage});
 }
 
 /// @nodoc
@@ -142,21 +123,15 @@ class __$$DashboardSummaryImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? randomMoment = freezed,
-    Object? randomMomentDate = freezed,
+    Object? randomPastMoment = freezed,
     Object? averageSleep7Days = freezed,
     Object? averageSleep30Days = freezed,
-    Object? sleepTrend = freezed,
-    Object? taskConsistencyPercentage = freezed,
+    Object? taskConsistencyPercentage = null,
   }) {
     return _then(_$DashboardSummaryImpl(
-      randomMoment: freezed == randomMoment
-          ? _value.randomMoment
-          : randomMoment // ignore: cast_nullable_to_non_nullable
-              as String?,
-      randomMomentDate: freezed == randomMomentDate
-          ? _value.randomMomentDate
-          : randomMomentDate // ignore: cast_nullable_to_non_nullable
+      randomPastMoment: freezed == randomPastMoment
+          ? _value.randomPastMoment
+          : randomPastMoment // ignore: cast_nullable_to_non_nullable
               as String?,
       averageSleep7Days: freezed == averageSleep7Days
           ? _value.averageSleep7Days
@@ -166,14 +141,10 @@ class __$$DashboardSummaryImplCopyWithImpl<$Res>
           ? _value.averageSleep30Days
           : averageSleep30Days // ignore: cast_nullable_to_non_nullable
               as double?,
-      sleepTrend: freezed == sleepTrend
-          ? _value.sleepTrend
-          : sleepTrend // ignore: cast_nullable_to_non_nullable
-              as String?,
-      taskConsistencyPercentage: freezed == taskConsistencyPercentage
+      taskConsistencyPercentage: null == taskConsistencyPercentage
           ? _value.taskConsistencyPercentage
           : taskConsistencyPercentage // ignore: cast_nullable_to_non_nullable
-              as double?,
+              as double,
     ));
   }
 }
@@ -182,23 +153,18 @@ class __$$DashboardSummaryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DashboardSummaryImpl implements _DashboardSummary {
   const _$DashboardSummaryImpl(
-      {@JsonKey(name: 'random_moment') this.randomMoment,
-      @JsonKey(name: 'random_moment_date') this.randomMomentDate,
+      {@JsonKey(name: 'random_past_moment') this.randomPastMoment,
       @JsonKey(name: 'average_sleep_7_days') this.averageSleep7Days,
       @JsonKey(name: 'average_sleep_30_days') this.averageSleep30Days,
-      @JsonKey(name: 'sleep_trend') this.sleepTrend,
       @JsonKey(name: 'task_consistency_percentage')
-      this.taskConsistencyPercentage});
+      this.taskConsistencyPercentage = 0});
 
   factory _$DashboardSummaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$DashboardSummaryImplFromJson(json);
 
   @override
-  @JsonKey(name: 'random_moment')
-  final String? randomMoment;
-  @override
-  @JsonKey(name: 'random_moment_date')
-  final String? randomMomentDate;
+  @JsonKey(name: 'random_past_moment')
+  final String? randomPastMoment;
   @override
   @JsonKey(name: 'average_sleep_7_days')
   final double? averageSleep7Days;
@@ -206,16 +172,12 @@ class _$DashboardSummaryImpl implements _DashboardSummary {
   @JsonKey(name: 'average_sleep_30_days')
   final double? averageSleep30Days;
   @override
-  @JsonKey(name: 'sleep_trend')
-  final String? sleepTrend;
-// 'up', 'down', 'stable'
-  @override
   @JsonKey(name: 'task_consistency_percentage')
-  final double? taskConsistencyPercentage;
+  final double taskConsistencyPercentage;
 
   @override
   String toString() {
-    return 'DashboardSummary(randomMoment: $randomMoment, randomMomentDate: $randomMomentDate, averageSleep7Days: $averageSleep7Days, averageSleep30Days: $averageSleep30Days, sleepTrend: $sleepTrend, taskConsistencyPercentage: $taskConsistencyPercentage)';
+    return 'DashboardSummary(randomPastMoment: $randomPastMoment, averageSleep7Days: $averageSleep7Days, averageSleep30Days: $averageSleep30Days, taskConsistencyPercentage: $taskConsistencyPercentage)';
   }
 
   @override
@@ -223,16 +185,12 @@ class _$DashboardSummaryImpl implements _DashboardSummary {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$DashboardSummaryImpl &&
-            (identical(other.randomMoment, randomMoment) ||
-                other.randomMoment == randomMoment) &&
-            (identical(other.randomMomentDate, randomMomentDate) ||
-                other.randomMomentDate == randomMomentDate) &&
+            (identical(other.randomPastMoment, randomPastMoment) ||
+                other.randomPastMoment == randomPastMoment) &&
             (identical(other.averageSleep7Days, averageSleep7Days) ||
                 other.averageSleep7Days == averageSleep7Days) &&
             (identical(other.averageSleep30Days, averageSleep30Days) ||
                 other.averageSleep30Days == averageSleep30Days) &&
-            (identical(other.sleepTrend, sleepTrend) ||
-                other.sleepTrend == sleepTrend) &&
             (identical(other.taskConsistencyPercentage,
                     taskConsistencyPercentage) ||
                 other.taskConsistencyPercentage == taskConsistencyPercentage));
@@ -240,14 +198,8 @@ class _$DashboardSummaryImpl implements _DashboardSummary {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      randomMoment,
-      randomMomentDate,
-      averageSleep7Days,
-      averageSleep30Days,
-      sleepTrend,
-      taskConsistencyPercentage);
+  int get hashCode => Object.hash(runtimeType, randomPastMoment,
+      averageSleep7Days, averageSleep30Days, taskConsistencyPercentage);
 
   /// Create a copy of DashboardSummary
   /// with the given fields replaced by the non-null parameter values.
@@ -268,23 +220,18 @@ class _$DashboardSummaryImpl implements _DashboardSummary {
 
 abstract class _DashboardSummary implements DashboardSummary {
   const factory _DashboardSummary(
-      {@JsonKey(name: 'random_moment') final String? randomMoment,
-      @JsonKey(name: 'random_moment_date') final String? randomMomentDate,
+      {@JsonKey(name: 'random_past_moment') final String? randomPastMoment,
       @JsonKey(name: 'average_sleep_7_days') final double? averageSleep7Days,
       @JsonKey(name: 'average_sleep_30_days') final double? averageSleep30Days,
-      @JsonKey(name: 'sleep_trend') final String? sleepTrend,
       @JsonKey(name: 'task_consistency_percentage')
-      final double? taskConsistencyPercentage}) = _$DashboardSummaryImpl;
+      final double taskConsistencyPercentage}) = _$DashboardSummaryImpl;
 
   factory _DashboardSummary.fromJson(Map<String, dynamic> json) =
       _$DashboardSummaryImpl.fromJson;
 
   @override
-  @JsonKey(name: 'random_moment')
-  String? get randomMoment;
-  @override
-  @JsonKey(name: 'random_moment_date')
-  String? get randomMomentDate;
+  @JsonKey(name: 'random_past_moment')
+  String? get randomPastMoment;
   @override
   @JsonKey(name: 'average_sleep_7_days')
   double? get averageSleep7Days;
@@ -292,11 +239,8 @@ abstract class _DashboardSummary implements DashboardSummary {
   @JsonKey(name: 'average_sleep_30_days')
   double? get averageSleep30Days;
   @override
-  @JsonKey(name: 'sleep_trend')
-  String? get sleepTrend; // 'up', 'down', 'stable'
-  @override
   @JsonKey(name: 'task_consistency_percentage')
-  double? get taskConsistencyPercentage;
+  double get taskConsistencyPercentage;
 
   /// Create a copy of DashboardSummary
   /// with the given fields replaced by the non-null parameter values.

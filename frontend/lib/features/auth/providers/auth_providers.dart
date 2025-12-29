@@ -6,6 +6,9 @@ import '../services/auth_service.dart';
 
 part 'auth_providers.g.dart';
 
+// Keep AuthResponse for backward compatibility, but use TokenResponse
+typedef AuthResponse = TokenResponse;
+
 @riverpod
 class AuthState extends _$AuthState {
   @override
@@ -23,9 +26,7 @@ class AuthState extends _$AuthState {
 
       final secureStorage = ref.read(secureStorageProvider);
       await secureStorage.saveAccessToken(response.accessToken);
-      if (response.refreshToken != null) {
-        await secureStorage.saveRefreshToken(response.refreshToken!);
-      }
+      await secureStorage.saveRefreshToken(response.refreshToken);
 
       state = const AsyncValue.data(true);
     } catch (e, stackTrace) {
@@ -34,24 +35,19 @@ class AuthState extends _$AuthState {
     }
   }
 
-  Future<void> register(String email, String password, String fullName) async {
+  Future<void> register(String email, String password) async {
     state = const AsyncValue.loading();
     try {
       final authService = ref.read(authServiceProvider);
       final request = RegisterRequest(
         email: email,
         password: password,
-        fullName: fullName,
       );
-      final response = await authService.register(request);
-
-      final secureStorage = ref.read(secureStorageProvider);
-      await secureStorage.saveAccessToken(response.accessToken);
-      if (response.refreshToken != null) {
-        await secureStorage.saveRefreshToken(response.refreshToken!);
-      }
-
-      state = const AsyncValue.data(true);
+      // Register returns UserResponse, then we need to login to get tokens
+      await authService.register(request);
+      
+      // After successful registration, automatically login
+      await login(email, password);
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
       rethrow;

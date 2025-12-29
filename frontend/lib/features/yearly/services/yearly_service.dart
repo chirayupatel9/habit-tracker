@@ -17,12 +17,24 @@ class YearlyService {
   YearlyService(this._apiClient);
 
   /// Get yearly tracking data for a specific year
-  Future<YearlyTracking> getYearlyTracking(int year) async {
+  Future<List<YearlyTrackingItem>> getYearlyTracking(int year) async {
     final response = await _apiClient.get(
-      '/entries/year?year=$year',
+      '/entries/yearly/$year',
       requireAuth: true,
     );
-    return YearlyTracking.fromJson(response);
+    
+    List<dynamic> itemsList;
+    if (response['_items'] != null) {
+      itemsList = response['_items'] as List;
+    } else if (response is List) {
+      itemsList = response as List;
+    } else {
+      return [];
+    }
+    
+    return itemsList
+        .map((json) => YearlyTrackingItem.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }
 

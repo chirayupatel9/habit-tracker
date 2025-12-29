@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../../core/errors/app_error.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/empty_state.dart';
@@ -26,41 +25,7 @@ class DashboardScreen extends ConsumerWidget {
     }
   }
 
-  IconData _getSleepTrendIcon(String? trend) {
-    switch (trend) {
-      case 'up':
-        return Icons.trending_up;
-      case 'down':
-        return Icons.trending_down;
-      case 'stable':
-        return Icons.trending_flat;
-      default:
-        return Icons.trending_flat;
-    }
-  }
 
-  Color _getSleepTrendColor(String? trend, BuildContext context) {
-    switch (trend) {
-      case 'up':
-        return Colors.green;
-      case 'down':
-        return Colors.red;
-      case 'stable':
-        return Colors.grey;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  String _formatDateSubtitle(String? dateString) {
-    if (dateString == null) return '';
-    try {
-      final date = DateTime.parse(dateString);
-      return '— ${DateFormat('MMM d').format(date)}';
-    } catch (_) {
-      return '— $dateString';
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -88,10 +53,10 @@ class DashboardScreen extends ConsumerWidget {
         },
         data: (summary) {
           // Check if all data is empty
-          final hasNoData = summary.randomMoment == null &&
+          final hasNoData = summary.randomPastMoment == null &&
               summary.averageSleep7Days == null &&
               summary.averageSleep30Days == null &&
-              summary.taskConsistencyPercentage == null;
+              summary.taskConsistencyPercentage == 0;
 
           if (hasNoData) {
             return EmptyState(
@@ -163,23 +128,10 @@ class DashboardScreen extends ConsumerWidget {
       title: 'Random Past Moment',
       icon: Icons.auto_awesome,
       iconColor: Theme.of(context).colorScheme.primary,
-      child: summary.randomMoment != null
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  summary.randomMoment!,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _formatDateSubtitle(summary.randomMomentDate),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade600,
-                        fontStyle: FontStyle.italic,
-                      ),
-                ),
-              ],
+      child: summary.randomPastMoment != null
+          ? Text(
+              summary.randomPastMoment!,
+              style: Theme.of(context).textTheme.bodyLarge,
             )
           : Text(
               'No moments recorded yet',
@@ -240,44 +192,7 @@ class DashboardScreen extends ConsumerWidget {
                 ],
               ),
             ),
-          if (summary.sleepTrend != null)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Trend:',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      _getSleepTrendIcon(summary.sleepTrend),
-                      color: _getSleepTrendColor(
-                        summary.sleepTrend,
-                        context,
-                      ),
-                      size: 20,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      summary.sleepTrend == 'up'
-                          ? 'Improving'
-                          : summary.sleepTrend == 'down'
-                              ? 'Declining'
-                              : 'Stable',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: _getSleepTrendColor(
-                              summary.sleepTrend,
-                              context,
-                            ),
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
-                  ],
-                ),
-              ],
-            )
-          else if (summary.averageSleep7Days == null &&
+          if (summary.averageSleep7Days == null &&
               summary.averageSleep30Days == null)
             Text(
               'No sleep data available',
@@ -299,9 +214,9 @@ class DashboardScreen extends ConsumerWidget {
       title: 'Task Consistency',
       icon: Icons.checklist,
       iconColor: Theme.of(context).colorScheme.primary,
-      child: summary.taskConsistencyPercentage != null
+      child: summary.taskConsistencyPercentage > 0
           ? Text(
-              'All tasks completed on ${summary.taskConsistencyPercentage!.toStringAsFixed(0)}% of tracked days',
+              'All tasks completed on ${summary.taskConsistencyPercentage.toStringAsFixed(0)}% of tracked days',
               style: Theme.of(context).textTheme.bodyLarge,
             )
           : Text(

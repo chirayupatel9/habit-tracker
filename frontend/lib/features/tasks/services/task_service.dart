@@ -23,22 +23,26 @@ class TaskService {
       requireAuth: true,
     );
     
-    // Backend returns list of tasks
-    if (response['tasks'] != null) {
-      final tasksList = response['tasks'] as List;
-      return tasksList.map((json) => Task.fromJson(json as Map<String, dynamic>)).toList();
+    // API returns array directly
+    List<dynamic> tasksList;
+    if (response['_items'] != null) {
+      tasksList = response['_items'] as List;
     } else if (response is List) {
-      return (response as List).map((json) => Task.fromJson(json as Map<String, dynamic>)).toList();
+      tasksList = response as List;
     } else {
       return [];
     }
+    
+    return tasksList
+        .map((json) => Task.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   /// Create a new task
-  Future<Task> createTask(String name) async {
+  Future<Task> createTask(String name, {bool isActive = true}) async {
     final response = await _apiClient.post(
       '/tasks',
-      {'name': name},
+      {'name': name, 'is_active': isActive},
       requireAuth: true,
     );
     return Task.fromJson(response);
@@ -46,9 +50,15 @@ class TaskService {
 
   /// Update an existing task
   Future<Task> updateTask(Task task) async {
-    final response = await _apiClient.put(
+    final updateData = <String, dynamic>{};
+    if (task.name.isNotEmpty) {
+      updateData['name'] = task.name;
+    }
+    updateData['is_active'] = task.isActive;
+    
+    final response = await _apiClient.patch(
       '/tasks/${task.id}',
-      task.toJson(),
+      updateData,
       requireAuth: true,
     );
     return Task.fromJson(response);
