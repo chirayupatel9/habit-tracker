@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../providers/yearly_providers.dart';
 import '../widgets/month_calendar_widget.dart';
 import '../../daily_entry/providers/daily_entry_providers.dart';
@@ -42,6 +43,7 @@ class YearlyCalendarScreen extends ConsumerWidget {
     final isCurrentYear = selectedYear == DateTime.now().year;
 
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: AppBar(
         title: const Text('Yearly Calendar'),
       ),

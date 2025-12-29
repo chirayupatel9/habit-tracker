@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../providers/feedback_providers.dart';
 
 class FeedbackScreen extends ConsumerStatefulWidget {
@@ -84,6 +85,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
       appBar: AppBar(
         title: const Text('Feedback'),
       ),
+      drawer: const AppDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),

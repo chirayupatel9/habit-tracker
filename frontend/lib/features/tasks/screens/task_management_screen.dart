@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../providers/task_providers.dart';
 import '../widgets/task_tile.dart';
 
@@ -111,6 +112,7 @@ class TaskManagementScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('My Tasks'),
       ),
+      drawer: const AppDrawer(),
       body: tasksAsync.when(
         loading: () => const Center(
           child: CircularProgressIndicator(),

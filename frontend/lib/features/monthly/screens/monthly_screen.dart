@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../models/monthly_summary.dart';
 import '../providers/monthly_providers.dart';
 import '../../daily_entry/providers/daily_entry_providers.dart';
@@ -20,6 +21,7 @@ class MonthlyScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Monthly View'),
       ),
+      drawer: const AppDrawer(),
       body: summaryAsync.when(
         loading: () => const Center(
           child: CircularProgressIndicator(),

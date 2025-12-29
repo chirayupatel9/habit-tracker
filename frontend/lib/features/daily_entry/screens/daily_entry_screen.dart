@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../core/widgets/app_drawer.dart';
 import '../models/daily_entry.dart';
 import '../models/task_completion.dart';
 import '../providers/daily_entry_providers.dart';
@@ -173,6 +174,7 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
       appBar: AppBar(
         title: const Text('Daily Entry'),
       ),
+      drawer: const AppDrawer(),
       body: SafeArea(
         child: Form(
           key: _formKey,
