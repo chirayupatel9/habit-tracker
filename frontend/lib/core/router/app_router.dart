@@ -1,4 +1,5 @@
 // ignore_for_file: invalid_annotation_target
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/auth/providers/auth_providers.dart';
@@ -11,6 +12,8 @@ import '../../features/monthly/screens/monthly_screen.dart';
 import '../../features/yearly/screens/yearly_calendar_screen.dart';
 import '../../features/tasks/screens/task_management_screen.dart';
 import '../../features/feedback/screens/feedback_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
+import '../../features/settings/screens/settings_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -87,11 +90,21 @@ GoRouter appRouter(AppRouterRef ref) {
         name: 'tasks',
         builder: (context, state) => const TaskManagementScreen(),
       ),
-      GoRoute(
-        path: '/feedback',
-        name: 'feedback',
-        builder: (context, state) => const FeedbackScreen(),
-      ),
+        GoRoute(
+          path: '/feedback',
+          name: 'feedback',
+          builder: (context, state) => const FeedbackScreen(),
+        ),
+        GoRoute(
+          path: '/profile',
+          name: 'profile',
+          builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: '/settings',
+          name: 'settings',
+          builder: (context, state) => const SettingsScreen(),
+        ),
     ],
   );
 

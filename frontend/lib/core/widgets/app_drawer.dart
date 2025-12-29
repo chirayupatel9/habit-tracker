@@ -89,6 +89,26 @@ class AppDrawer extends ConsumerWidget {
                 _buildDrawerItem(
                   context,
                   ref,
+                  const DrawerItem(
+                    title: 'Profile',
+                    icon: Icons.person,
+                    routeName: '/profile',
+                  ),
+                  currentLocation,
+                ),
+                _buildDrawerItem(
+                  context,
+                  ref,
+                  const DrawerItem(
+                    title: 'Settings',
+                    icon: Icons.settings,
+                    routeName: '/settings',
+                  ),
+                  currentLocation,
+                ),
+                _buildDrawerItem(
+                  context,
+                  ref,
                   DrawerItem.feedback,
                   currentLocation,
                 ),

@@ -5,7 +5,8 @@ import '../../../core/errors/app_error.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/error_view.dart';
-import '../../../core/widgets/app_drawer.dart';
+import '../../../core/layout/adaptive_scaffold.dart';
+import '../../../core/widgets/animated_switcher_wrapper.dart';
 import '../models/dashboard_summary.dart';
 import '../providers/dashboard_providers.dart';
 import '../widgets/summary_card.dart';
@@ -32,12 +33,10 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(dashboardSummaryProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-      ),
-      drawer: const AppDrawer(),
-      body: summaryAsync.when(
+    return AdaptiveScaffold(
+      title: 'Dashboard',
+      body: AnimatedSwitcherWrapper(
+        child: summaryAsync.when(
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
@@ -104,6 +103,7 @@ class DashboardScreen extends ConsumerWidget {
             ),
           );
         },
+      ),
       ),
     );
   }
