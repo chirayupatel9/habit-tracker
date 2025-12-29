@@ -13,7 +13,10 @@ import '../../features/yearly/screens/yearly_calendar_screen.dart';
 import '../../features/tasks/screens/task_management_screen.dart';
 import '../../features/feedback/screens/feedback_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
+import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/profile/screens/change_password_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
+import '../../features/settings/screens/delete_account_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -101,9 +104,24 @@ GoRouter appRouter(AppRouterRef ref) {
           builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
+          path: '/profile/edit',
+          name: 'edit-profile',
+          builder: (context, state) => const EditProfileScreen(),
+        ),
+        GoRoute(
+          path: '/profile/change-password',
+          name: 'change-password',
+          builder: (context, state) => const ChangePasswordScreen(),
+        ),
+        GoRoute(
           path: '/settings',
           name: 'settings',
           builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          path: '/settings/delete-account',
+          name: 'delete-account',
+          builder: (context, state) => const DeleteAccountScreen(),
         ),
     ],
   );

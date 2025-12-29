@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/layout/page_scaffold.dart';
 import '../../../core/widgets/async_state_view.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/section.dart';
+import '../../../core/theme/spacing.dart';
 import '../models/app_settings.dart';
 import '../providers/settings_provider.dart';
 
@@ -97,7 +99,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         // App Section
         Section(
           title: 'App',
-          spacingAfter: 0,
           child: AppCard(
             child: Column(
               children: [
@@ -116,6 +117,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   onTap: () => _selectFirstDayOfWeek(settings),
                 ),
               ],
+            ),
+          ),
+        ),
+
+        AppSpacing.heightLg,
+
+        // Account Section
+        Section(
+          title: 'Account',
+          spacingAfter: 0,
+          child: AppCard(
+            child: ListTile(
+              leading: Icon(
+                Icons.delete_forever,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              title: Text(
+                'Delete Account',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+              subtitle: const Text(
+                'Permanently delete your account and all data',
+              ),
+              trailing: Icon(
+                Icons.chevron_right,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              onTap: () => context.push('/settings/delete-account'),
             ),
           ),
         ),

@@ -218,15 +218,20 @@ class ApiClient {
   Future<Map<String, dynamic>> delete(
     String endpoint, {
     bool requireAuth = true,
+    Map<String, dynamic>? body,
   }) async {
     try {
       final uri = Uri.parse('$_baseUrl$endpoint');
-      final response = await http
-          .delete(
-            uri,
-            headers: await _getHeaders(includeAuth: requireAuth),
-          )
-          .timeout(AppConstants.connectionTimeout);
+      final headers = await _getHeaders(includeAuth: requireAuth);
+      
+      final request = http.Request('DELETE', uri);
+      request.headers.addAll(headers);
+      if (body != null) {
+        request.body = jsonEncode(body);
+      }
+      
+      final streamedResponse = await request.send().timeout(AppConstants.connectionTimeout);
+      final response = await http.Response.fromStream(streamedResponse);
 
       return _handleResponse(response);
     } on http.ClientException {

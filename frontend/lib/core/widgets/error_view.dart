@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../errors/app_error.dart';
+import '../theme/app_colors.dart';
 
 class ErrorView extends StatelessWidget {
   final AppError error;
@@ -17,6 +18,9 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -31,16 +35,17 @@ class ErrorView extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               customTitle ?? error.title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: colorScheme.appTextPrimary,
                   ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               customMessage ?? error.userMessage,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade600,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.appTextSecondary,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -70,13 +75,14 @@ class ErrorView extends StatelessWidget {
   }
 
   Color _getErrorColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return error.when(
-      network: (_) => Colors.orange,
-      unauthorized: (_) => Colors.red,
-      validation: (_, __) => Colors.orange,
-      notFound: (_) => Colors.grey,
-      server: (_) => Colors.red,
-      unknown: (_) => Theme.of(context).colorScheme.error,
+      network: (_) => AppColors.warning,
+      unauthorized: (_) => colorScheme.appError,
+      validation: (_, __) => AppColors.warning,
+      notFound: (_) => colorScheme.appTextSecondary,
+      server: (_) => colorScheme.appError,
+      unknown: (_) => colorScheme.appError,
     );
   }
 }
