@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../core/errors/app_error.dart';
+import '../../../core/errors/error_mapper.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/error_view.dart';
 import '../models/dashboard_summary.dart';
 import '../providers/dashboard_providers.dart';
 import '../widgets/summary_card.dart';
@@ -70,66 +74,69 @@ class DashboardScreen extends ConsumerWidget {
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
-        error: (error, stackTrace) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 48,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Error loading dashboard',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString().replaceAll('Exception: ', ''),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  ref.invalidate(dashboardSummaryProvider);
-                },
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-        data: (summary) => SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Greeting Header
-                _buildGreetingHeader(context),
-                const SizedBox(height: 24),
+        error: (error, stackTrace) {
+          final appError = error is AppError
+              ? error
+              : ErrorMapper.fromException(error as Exception);
+          
+          return ErrorView(
+            error: appError,
+            onRetry: () {
+              ref.invalidate(dashboardSummaryProvider);
+            },
+          );
+        },
+        data: (summary) {
+          // Check if all data is empty
+          final hasNoData = summary.randomMoment == null &&
+              summary.averageSleep7Days == null &&
+              summary.averageSleep30Days == null &&
+              summary.taskConsistencyPercentage == null;
 
-                // Random Past Moment
-                _buildRandomMomentCard(context, summary),
-                const SizedBox(height: 16),
+          if (hasNoData) {
+            return EmptyState(
+              icon: Icons.dashboard_outlined,
+              title: 'Welcome to Habit Tracker',
+              description:
+                  'Start tracking your habits to see insights and progress here.',
+              actionLabel: 'Track Today',
+              onAction: () {
+                final today = DateTime.now();
+                ref.read(selectedDateProvider.notifier).setDate(today);
+                context.push('/daily-entry');
+              },
+            );
+          }
 
-                // Sleep Analysis Card
-                _buildSleepAnalysisCard(context, summary),
-                const SizedBox(height: 16),
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Greeting Header
+                  _buildGreetingHeader(context),
+                  const SizedBox(height: 24),
 
-                // Task Consistency Card
-                _buildTaskConsistencyCard(context, summary),
-                const SizedBox(height: 24),
+                  // Random Past Moment
+                  _buildRandomMomentCard(context, summary),
+                  const SizedBox(height: 16),
 
-                // Quick Actions
-                _buildQuickActions(context, ref),
-              ],
+                  // Sleep Analysis Card
+                  _buildSleepAnalysisCard(context, summary),
+                  const SizedBox(height: 16),
+
+                  // Task Consistency Card
+                  _buildTaskConsistencyCard(context, summary),
+                  const SizedBox(height: 24),
+
+                  // Quick Actions
+                  _buildQuickActions(context, ref),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

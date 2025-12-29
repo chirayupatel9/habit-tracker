@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../core/constants/app_constants.dart';
+import '../core/errors/app_error.dart';
+import '../core/errors/error_mapper.dart';
 import 'secure_storage.dart';
 
 part 'api_client.g.dart';
@@ -251,6 +253,7 @@ class ApiClient {
         errorMessage = errorMessage.isEmpty
             ? 'Unauthorized. Please login again.'
             : errorMessage;
+        // 401 errors will trigger logout in the router
         break;
       case 404:
         errorType = ApiErrorType.notFound;
