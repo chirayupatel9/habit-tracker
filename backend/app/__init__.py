@@ -1,0 +1,2 @@
+"""Habit Tracker API application."""
+
