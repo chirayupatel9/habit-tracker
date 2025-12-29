@@ -9,6 +9,7 @@ from app.auth.router import router as auth_router
 from app.tasks.router import router as tasks_router
 from app.entries.router import router as entries_router
 from app.feedback.router import router as feedback_router
+from app.users.router import router as users_router
 from app.notifications.scheduler import start_scheduler, stop_scheduler
 
 
@@ -47,6 +48,7 @@ app.include_router(auth_router)
 app.include_router(tasks_router)
 app.include_router(entries_router)
 app.include_router(feedback_router)
+app.include_router(users_router)
 
 
 @app.get("/")
